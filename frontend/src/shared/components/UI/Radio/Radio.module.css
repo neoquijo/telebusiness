@@ -1,0 +1,58 @@
+.radioWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  margin-right: 2em;
+}
+
+.radioWrapper.inline {
+  flex-direction: row;
+  align-items: center;
+  gap: .4em;
+}
+
+.label {
+  font-size: 0.9em;
+  color: var(--text-color, white);
+  white-space: nowrap;
+  margin-bottom: 0;
+}
+
+.radioContainer {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.hiddenRadio {
+  display: none;
+}
+
+.customRadio {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  /* Круглая форма для радио-кнопки */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--input-bg);
+  color: white;
+  font-weight: 700;
+  font-size: 1.5em;
+  transition: background-color 0.3s ease;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+
+.customRadio:hover {
+  background-color: var(--input-hover-bg, #5a5a5a);
+}
+
+.radiomark {
+  font-size: 1em;
+  pointer-events: none;
+  transform: translateY(4px);
+}

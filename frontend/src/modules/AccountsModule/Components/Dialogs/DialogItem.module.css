@@ -1,0 +1,38 @@
+.wrapper {
+  padding: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.odd {
+  background-color: var(--bg-transparent)
+}
+
+.even {
+  background-color: var(--bg-transparent-light);
+}
+
+.greenIcon {
+  color: green;
+}
+
+.nd {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5em;
+}
+
+
+.st {
+  display: flex;
+}
+
+
+.highlight {
+  background-color: #ffeb3b;
+  padding: 2px 0;
+  border-radius: 2px;
+  color: var(--bg);
+}

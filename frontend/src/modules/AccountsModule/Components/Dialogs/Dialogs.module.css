@@ -1,0 +1,105 @@
+.wrapper {
+  padding: 1em;
+}
+
+.wrapper:first-child {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.title {
+  font-size: 2em;
+}
+
+.totalChats {
+  font-size: 2em;
+}
+
+.chats {
+  margin-top: 1em;
+  /* background-color: var(--bg-primary); */
+  /* border-radius: 20px; */
+  width: 100%;
+  height: 69vh;
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.chats:first-child {
+  background-color: greenyellow;
+}
+
+.actions {
+
+  display: flex;
+  padding: 0 1em;
+  height: 10vh;
+  align-items: center;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2em;
+
+}
+
+.filterButtons {
+  /* width: 100%; */
+  display: flex;
+  gap: 10px;
+
+  flex-wrap: nowrap !important;
+  margin-bottom: 15px;
+}
+
+.searchInput {
+  background-color: transparent;
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #dddddd4b;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.searchResults {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dialogItem {
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  /* background: #fff; */
+}
+
+.dialogTitle {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.dialogDescription {
+  color: #666;
+  font-size: 0.9em;
+}

@@ -1,0 +1,19 @@
+.VDivider {
+  width: 1px;
+  background-color: #ccc;
+  align-self: stretch;
+  min-height: 100% !important;
+  /* margin: 0 1em; */
+  margin: 1em;
+}
+
+.HDivider {
+  height: 1px;
+  /* Тонкий горизонтальный разделитель */
+  background-color: #ccc;
+  /* Цвет разделителя */
+  width: 100%;
+  /* Занимает всю ширину родителя */
+  margin: 1em 0;
+  /* Отступы сверху и снизу */
+}

@@ -1,0 +1,67 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  position: relative;
+  margin-top: 1em;
+  /* padding: 10px; */
+  /* background-color: var(--bg-light); */
+  /* border-radius: 5px; */
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+}
+
+.title {
+  font-size: 1em;
+  font-weight: bold;
+  color: var(--text-color);
+  margin-bottom: 5px;
+}
+
+.label {
+  font-size: 0.9em;
+  color: var(--text-color);
+}
+
+.item {
+  white-space: nowrap;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pickList,
+.pickedList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.pickedList {
+  display: flex;
+  background-color: var(--bg-primary);
+  padding: 1em;
+  border-radius: 10px;
+}
+
+.item {
+  padding: 5px 10px;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.item:hover {
+  background-color: var(--bg-hover);
+}

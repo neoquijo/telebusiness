@@ -1,0 +1,21 @@
+.confirm {
+  background-color: var(--bg-primary);
+  padding: 2em;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  max-width: 60vmin;
+  gap: 1em;
+}
+
+.title {
+  font-size: 1.3em;
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}

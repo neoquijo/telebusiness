@@ -1,0 +1,52 @@
+.wrapper {
+  padding: 3em 5em;
+  background-color: var(--bg-primary);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+
+}
+
+.form {
+  gap: 1em;
+  height: auto;
+  margin-top: 2em;
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  gap: 1em;
+  width: 500px !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.input {
+  width: 500px !important;
+  height: 3em !important;
+  font-size: 1.1em;
+}
+
+.avatar {
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.details {
+  font-size: 1.2em;
+  width: 500px;
+}
+
+
+
+.username {
+  font-style: italic;
+  font-weight: 900;
+  font-size: 2.5em;
+}

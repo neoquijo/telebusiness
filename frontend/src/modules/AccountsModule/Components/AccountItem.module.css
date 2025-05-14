@@ -1,0 +1,56 @@
+.wrapper {
+  background-color: var(--bg-primary);
+  display: flex;
+  justify-content: space-between;
+  padding: 1em;
+  border-radius: 10px;
+}
+
+.online,
+.error,
+.expired {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+}
+
+.online {
+  background-color: green;
+  font-style: oblique;
+}
+
+.expired {
+  background-color: yellow;
+}
+
+.error {
+  background-color: rgba(255, 0, 0, 0.863);
+}
+
+
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+
+.status {
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.chats {
+  cursor: pointer;
+  font-size: 2em;
+}
+
+.highlight {
+  background-color: #ffeb3b;
+  padding: 2px 4px;
+  border-radius: 2px;
+}

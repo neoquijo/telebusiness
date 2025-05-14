@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Manrope:wght@200..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+
+/* ... */
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --bg-transparent: rgba(88, 85, 85, 0.322);
+  --bg-transparent-light: rgba(88, 85, 85, 0.185);
+
+
+
+  --link-color: rgb(9, 84, 245);
+  /* --background-color: url('https://abrakadabra.fun/uploads/posts/2022-01/1643025424_1-abrakadabra-fun-p-oboi-na-rabochii-stol-garmoniya-2.jpg'); */
+  /* --background-color: url('https://en.idei.club/uploads/posts/2023-06/1686108389_en-idei-club-p-light-yellow-colour-background-dizain-46.jpg'); */
+  /* --background-color: url('https://i.pinimg.com/originals/c7/7f/b2/c77fb2fab9d8e2079c2921f92d58cbe1.jpg'); */
+  /* --background-color: url("https://gagaru.club/uploads/posts/2023-02/1676233808_gagaru-club-p-nezhnii-krasivii-oboi-36.jpg"); */
+  /* --background-color: url('https://avatars.mds.yandex.net/i?id=b8eab85b89e6cf92cac5548c46170d50_l-5294444-images-thumbs&ref=rim&n=13&w=1024&h=512'); */
+  /* --background-color: url('https://i.pinimg.com/originals/f6/e9/e3/f6e9e304f9c256d582975773b0b0005b.jpg'); */
+  /* --bg-modal: url('https://i.pinimg.com/originals/f6/e9/e3/f6e9e304f9c256d582975773b0b0005b.jpg'); */
+  /* --bg-modal: url('https://avatars.mds.yandex.net/i?id=97f8bddf98d4c8db70644a8b5e9c445a_l-9102364-images-thumbs&ref=rim&n=13&w=1920&h=900'); */
+  /* --background-color: url('https://wallpapers.com/images/hd/blockchain-background-l8cqk54nbc55sf3h.jpg'); */
+  /* --background-color: url('https://avatars.mds.yandex.net/i?id=0375b51057647853599ef5fc7febbbfc_l-5273845-images-thumbs&n=13'); */
+  /* --background-color: url('https://wallpapertag.com/wallpaper/full/b/6/2/127773-light-yellow-background-1920x1080-large-resolution.jpg'); */
+  /* --background-color: url('https://wallpapers.com/images/hd/flex-background-8omroot3q8b0hrge.jpg'); */
+  --background-color: url('https://i.pinimg.com/originals/1d/0f/c8/1d0fc8f888f83378f2218ac4f440d4a5.jpg');
+  --bg-modal: url('https://i.pinimg.com/originals/1d/0f/c8/1d0fc8f888f83378f2218ac4f440d4a5.jpg');
+  /* --background-color: url('https://avatars.mds.yandex.net/i?id=97f8bddf98d4c8db70644a8b5e9c445a_l-9102364-images-thumbs&ref=rim&n=13&w=1920&h=900'); */
+  /* --background-color: url('https://i.pinimg.com/originals/a1/7d/37/a17d37854fb589020cb33cf286e414ba.jpg'); */
+  /* --background-color: #CDDCDC; */
+  /* --background-color: linear-gradient(to top, #96fbc4 0%, #f9f586 100%); */
+  /* --background-color: linear-gradient(to top, #a8edea 0%, #fed6e3 100%); */
+  /* --background-color: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%); */
+  /* --background-color: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%); */
+  /* --background-color: rgb(230, 226, 189); */
+  /* Светлая тема - фон */
+  --text-color: black;
+  --border: black;
+  --bg: white;
+  /* Светлая тема - текст */
+  --bg-primary: #6d64642d;
+  /* Светлая тема - основной фон элемента */
+  --bg-hover: #e0e0e0;
+  /* Светлая тема - фон при наведении */
+  --icon-primary: rgb(79, 79, 228);
+  /* Светлая тема - цвет иконок */
+  --text-primary: rgba(0, 0, 0, 0.815);
+
+  --bg-ribbon: rgba(0, 255, 13, 0.726);
+  /* Светлая тема - основной цвет текста */
+  --box-shadow-right: 5px 0 15px rgba(0, 0, 0, 0.1);
+  /* Светлая тема - тень справа */
+  --box-shadow-bottom: 0 5px 15px rgba(0, 0, 0, 0.1);
+  /* Светлая тема - тень снизу */
+  --bg-secondary: rgba(104, 112, 100, 0.829);
+  --bg-darken: rgb(26, 136, 199);
+  --button-bg: rgb(84, 228, 79);
+  --input-bg: rgba(39, 140, 199, 0.603);
+  --bg-light: rgba(199, 57, 57, 0.596);
+
+
+
+
+  --bg-transparent-light: rgba(58, 77, 85, 0.185);
+  --bg-transparent: rgba(47, 70, 80, 0.096);
+
+  --bg-primary: rgba(31, 56, 197, 0.185);
+  --bg-secondary: rgba(47, 70, 80, 0.096);
+}
+
+[data-rmiz-modal-content] {
+  background: var(--bg-modal) !important;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+th,
+td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+th {
+  background-color: var(--bg-primary);
+  font-weight: bold;
+}
+
+* {
+  box-sizing: border-box !important;
+  /* transition: all 300ms; */
+}
+
+ul {
+  list-style-type: none;
+}
+
+[data-theme="dark"] {
+  --link-color: rgb(223, 226, 43);
+  --bg-light: rgba(233, 209, 209, 0.205);
+  --bg: black;
+  --border: rgba(255, 255, 255, 0.329);
+  --bg-modal: url('https://amazingpics.net/content/download/minimalistic742.jpg');
+  --bg-modal: url('https://static.wixstatic.com/media/d81b0f_185f788dfce041c9964b478cd1c513b7~mv2.gif');
+  --bg-ribbon: rgba(255, 0, 0, 0.568);
+  /* --background-color: url('/bg-test.png'); */
+  /* --background-color: #121212; */
+  /* --background-color: #302c2c; */
+  /* --background-color: rgb(47, 47, 65); */
+  /* --background-color: url('https://i.pinimg.com/originals/7c/aa/8d/7caa8d5467932af8bb06067c75042e07.jpg'); */
+  /* --background-color: url('https://i.pinimg.com/originals/ca/75/9a/ca759a6e565ef9b38bf8d12900fb560c.jpg'); */
+  /* --background-color: url('https://assets-global.website-files.com/5b8d99898a7eadf2b867fbd2/5b8d9b5f7f2233284c2d6b3b_powdered-peak.jpg'); */
+  /* --background-color: url('https://static.wixstatic.com/media/72223f_1d15556277944620a399ee3dc61c7fed.jpg/v1/fill/w_1920,h_1200,al_c,q_90,enc_auto/72223f_1d15556277944620a399ee3dc61c7fed.jpg'); */
+  /* --background-color: url('https://assets-global.website-files.com/5b8d99898a7eadf2b867fbd2/5b8d9b5f7f2233284c2d6b3b_powdered-peak.jpg'); */
+  /* --background-color: url('https://i.pinimg.com/originals/a1/08/37/a108375c18d9abb37f7416e55eb17877.jpg'); */
+  /* --background-color: url('https://static.wixstatic.com/media/d81b0f_185f788dfce041c9964b478cd1c513b7~mv2.gif'); */
+  /* --background-color: url('https://i.pinimg.com/originals/02/e1/30/02e130363b36fe6c08ab9a94c213c4be.jpg'); */
+  /* --background-color: url('https://avatars.mds.yandex.net/i?id=5651e4aef9a0f6e1de449d36914aeb3d_l-5118451-images-thumbs&n=13'); */
+  /* --background-color: url('https://amazingpics.net/content/download/minimalistic742.jpg'); */
+  /* вот норм */
+  /* --background-color: url('https://img3.akspic.ru/crops/0/6/2/9/0/109260/109260-dizajn-monohromnyj-monoxromnyj_rejim-svet-ottenki_serogo-1920x1080.jpg'); */
+  /* --background-color: url('https://images.coolwallpapers.me/picsup/5534292-darker-black-wallpapers.jpg'); */
+  /* --background-color: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/4430159a-24ce-4291-8254-173eb8dbfebb/d7f8qv7-9db0c547-6eac-4b13-81ec-6b6908be04ab.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwic3ViIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsImF1ZCI6WyJ1cm46c2VydmljZTpmaWxlLmRvd25sb2FkIl0sIm9iaiI6W1t7InBhdGgiOiIvZi80NDMwMTU5YS0yNGNlLTQyOTEtODI1NC0xNzNlYjhkYmZlYmIvZDdmOHF2Ny05ZGIwYzU0Ny02ZWFjLTRiMTMtODFlYy02YjY5MDhiZTA0YWIuanBnIn1dXX0.GoMqFzKsNTF9juM9aKdl5NKXmZLFiZndj2loyhSK_bI'); */
+  /* --background-color: url('https://avatars.mds.yandex.net/i?id=da0f3649b1a2234967ab7b056776c88e_l-10100796-images-thumbs&n=13'); */
+  --background-color: url('https://lastfm.freetls.fastly.net/i/u/ar0/63c28d9b6188d003ab5165bab603fb97.jpg');
+  /* --background-color: url('https://i.ytimg.com/vi/FABiUxkD8zw/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGUgZShlMA8=&rs=AOn4CLCqVwdcSBdrDt_g3UhrVm3K4-61nw'); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: url(''); */
+  /* --background-color: #23272f; */
+  /* --bg-secondary: rgb(46, 46, 70); */
+  --bg-secondary: #23272f75;
+  --input-bg: rgba(79, 96, 105, 0.767);
+  --button-bg: rgb(28, 187, 28);
+  /* Тёмная тема - фон */
+  --text-color: white;
+  /* Тёмная тема - текст */
+  --bg-primary: rgba(47, 47, 65, 0.534);
+  /* Тёмная тема - основной фон элемента */
+  --bg-hover: #6e6b6b;
+  /* Тёмная тема - фон при наведении */
+  --icon-primary: rgb(238, 238, 238);
+  /* Тёмная тема - цвет иконок */
+  --button-text: black;
+  --text-primary: rgba(216, 216, 216, 0.884);
+  /* Тёмная тема - основной цвет текста */
+  --box-shadow-right: 0 16px 32px -16px rgba(0, 0, 0, .1), 0 0 0 1px hsla(0, 0%, 100%, .05);
+  /* Тёмная тема - тень справа */
+  --box-shadow-bottom: 0 16px 32px -16px rgba(0, 0, 0, .1), 0 1px 0 0 hsla(0, 0%, 100%, .05);
+
+  /* Тёмная тема - тень снизу */
+  --bg-darken: rgb(27, 27, 41);
+}
+
+button:hover {
+  background-color: var(--bg-hover);
+  box-shadow: var(--box-shadow-bottom), var(--box-shadow-right);
+}
+
+a {
+  color: var(--icon-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--text-primary);
+}
+
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+h1 {
+  font-size: 5rem !important;
+  margin: 1.7rem !important;
+}
+
+h2 {
+  font-size: 3rem !important;
+  margin: 1.7rem !important;
+}
+
+h3 {
+  font-size: 2rem !important;
+  margin: 1.7rem !important;
+}
+
+h4 {
+  font-size: 1.5rem !important;
+  margin: 1.7rem !important;
+}
+
+body {
+  transition: all 300ms;
+  font-weight: 500;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--background-color);
+  backdrop-filter: brightness(100%);
+
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: var(--text-primary);
+  font-family: "Jura", serif;
+  /* font-family: "Russo One", serif; */
+  font-weight: 600;
+  font-size: 1em;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--bg-primary);
+  color: var(--button-text);
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+button:hover {
+  border-color: #646cff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* @media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+
+  button {
+    background-color: #f9f9f9;
+  }
+} */

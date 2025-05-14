@@ -1,0 +1,107 @@
+[data-theme="dark"] {
+  --button-primary: white;
+  --button-primary-hover: rgb(71, 248, 65);
+  --button-text-color: black;
+  --button-danger: salmon;
+  --button-danger-hover: red;
+  --button-danger-color: white;
+  --button-warning: orange;
+  --button-warning-hover: darkorange;
+  --button-warning-color: black;
+  --button-secondary: gray;
+  --button-secondary-hover: darkgray;
+  --button-secondary-color: black;
+  --button-ghost: transparent;
+  --button-ghost-hover: rgba(255, 255, 255, 0.1);
+  --button-ghost-color: white;
+}
+
+[data-theme="light"] {
+  --button-primary: rgb(84, 228, 79);
+  --button-primary-hover: rgb(40, 196, 34);
+  --button-text-color: black;
+  --button-danger: salmon;
+  --button-danger-hover: red;
+  --button-danger-color: black;
+  --button-warning: orange;
+  --button-warning-hover: darkorange;
+  --button-warning-color: black;
+  --button-secondary: gray;
+  --button-secondary-hover: darkgray;
+  --button-secondary-color: black;
+  --button-ghost: rgba(255, 255, 255, 0.185);
+  --button-ghost-hover: rgba(47, 116, 173, 0.548);
+  --button-ghost-color: black;
+}
+
+.wrapper {
+  display: flex;
+  white-space: nowrap;
+}
+
+.input {
+  white-space: nowrap;
+  box-sizing: border-box;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 1em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.05em;
+  transition: all 400ms;
+  font-weight: 700;
+  color: var(--button-text-color);
+}
+
+.primary {
+  color: var(--button-text-color);
+  background: var(--button-primary);
+}
+
+.primary:hover,
+.primary-active {
+  background-color: var(--button-primary-hover);
+}
+
+.secondary {
+  color: var(--button-secondary-color);
+  background: var(--button-secondary);
+}
+
+.secondary:hover,
+.secondary-active {
+  background-color: var(--button-secondary-hover);
+}
+
+.danger {
+  color: var(--button-danger-color);
+  background: var(--button-danger);
+}
+
+.danger:hover,
+.danger-active {
+  background: var(--button-danger-hover);
+}
+
+.warning {
+  color: var(--button-warning-color);
+  background: var(--button-warning);
+}
+
+.warning:hover,
+.warning-active {
+  background: var(--button-warning-hover);
+}
+
+.ghost {
+  color: var(--button-ghost-color);
+  background: var(--button-ghost);
+}
+
+.ghost:hover,
+.ghost-active {
+  color: var(--text-color);
+  background: var(--button-ghost-hover);
+}

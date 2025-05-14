@@ -1,0 +1,132 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  --primary: #31312ab9;
+}
+
+.form {
+  transform: translateY(-1em);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  width: 60%;
+  height: 70%;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.st {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2em;
+  padding: 4em;
+  width: 50%;
+  color: white;
+  background-color: var(--primary);
+}
+
+.nd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2em;
+  padding: 4em;
+  width: 50%;
+  color: rgba(0, 0, 0, 0.75);
+  background-color: white;
+
+}
+
+.button {
+  cursor: pointer;
+}
+
+.st>.title {
+  text-align: center;
+  font-size: 2.5em;
+  font-weight: 900;
+  font-family: var(--title-bold);
+}
+
+.nd>.title {
+  text-align: center;
+  font-size: 2.5em;
+  font-weight: 900;
+  font-family: var(--title-bold);
+}
+
+.nd>.inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 80%;
+  justify-content: center;
+  text-align: center;
+}
+
+.input {
+  background-color: #af8585;
+  padding-left: 1em;
+  display: flex;
+  height: 3em;
+  border: none;
+  outline: none;
+}
+
+.st>.text {
+  font-size: 1.5em;
+  font-weight: 500;
+}
+
+.st>.button {
+  padding: 20px 1.5em;
+  border: 2px solid white;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 1.3em;
+  margin-top: 1.42em;
+}
+
+.nd>.button {
+  padding: 20px 1.5em;
+  background-color: var(--primary);
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 1.3em;
+  margin-top: 1.42em;
+  color: white;
+  align-self: flex-end;
+}
+
+.nd {
+  width: 50%;
+  padding: 4em;
+}
+
+.langPicker {
+  position: absolute;
+  left: 1%;
+  top: 10%;
+  z-index: 2;
+}
+
+.logo {
+  display: flex;
+  position: relative;
+  margin-top: 1em;
+  width: 350px;
+  height: 350px !important;
+  align-self: center;
+  border: 1px solid white;
+  border-radius: 100%;
+  background: url('/logo2.png') center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}

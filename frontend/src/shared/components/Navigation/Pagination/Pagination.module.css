@@ -1,0 +1,32 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.pages {
+  white-space: nowrap;
+  display: flex;
+  gap: 3px;
+}
+
+.toPage {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.page,
+.activePage {
+  cursor: pointer;
+  background-color: var(--bg-primary);
+  width: fit-content;
+  height: fit-content;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.activePage {
+  background-color: white;
+  color: black;
+}

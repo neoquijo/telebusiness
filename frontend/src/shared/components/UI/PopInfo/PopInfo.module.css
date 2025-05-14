@@ -1,0 +1,94 @@
+.popInfoWrapper {
+  position: relative;
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon {
+  color: #585757;
+  align-self: center;
+  font-size: 1.6em;
+  flex-shrink: 0;
+}
+
+.tooltip {
+  width: 35vmin;
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  z-index: 10;
+  /* max-width: 700px; */
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/* Стрелка */
+.arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+/* Позиционирование подсказки и стрелки */
+.tooltip.top {
+  bottom: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip.top .arrow {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px 6px 0 6px;
+  border-color: #333 transparent transparent transparent;
+}
+
+.tooltip.bottom {
+  top: calc(100% + 0px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.tooltip.bottom .arrow {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 6px 8px 6px;
+  border-color: transparent transparent #333 transparent;
+}
+
+.tooltip.left {
+  top: 50%;
+  right: calc(100% + 8px);
+  transform: translateY(-50%);
+}
+
+.tooltip.left .arrow {
+  top: 50%;
+  right: -8px;
+  transform: translateY(-50%);
+  border-width: 6px 0 6px 8px;
+  border-color: transparent transparent transparent #333;
+}
+
+.tooltip.right {
+  top: 50%;
+  left: calc(100% + 14px);
+  transform: translateY(-50%);
+}
+
+.tooltip.right .arrow {
+  top: 50%;
+  left: -14px;
+  transform: translateY(-50%);
+  border-width: 6px 8px 6px 0;
+  border-color: transparent #333 transparent transparent;
+}

@@ -1,0 +1,75 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  position: relative;
+}
+
+.label {
+  font-size: 0.9em;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.selectContainer {
+  margin-right: 1em;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  /* Выравниваем select и PopInfo по центру */
+  gap: 8px;
+  /* Отступ между select и PopInfo */
+}
+
+.select {
+  width: 100%;
+  height: 2em;
+  background-color: var(--bg-light);
+  border-radius: 5px;
+  border: none;
+  color: var(--text-color);
+  outline: none;
+  padding: 3px 5px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.selectWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.selectWrapper::after {
+  content: '▼';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: white;
+}
+
+.option {
+  background-color: var(--bg);
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-direction: row !important;
+}
+
+.label {
+  font-size: 0.9em;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.selectContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}

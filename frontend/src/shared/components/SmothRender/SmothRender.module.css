@@ -1,0 +1,25 @@
+@keyframes appear {
+  0% {
+    transform: translateX(100px);
+    border-radius: 300px;
+    padding: 0;
+  }
+
+  100% {
+    opacity: 1;
+    padding: 10px 1em;
+    transform: translateX(0);
+    border-radius: 3px;
+  }
+}
+
+.animated {
+  animation: appear 0.5s ease forwards;
+  opacity: 0;
+  padding: 0;
+  margin-top: -1em;
+}
+
+.animated:nth-child(1) {
+  margin-top: 0;
+}

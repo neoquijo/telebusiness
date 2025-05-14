@@ -1,0 +1,31 @@
+.wrapper,
+.previewSection {
+  display: flex;
+  padding: 2em;
+  flex-direction: column;
+  background-color: var(--bg-primary);
+  border-radius: 20px;
+}
+
+.previewSection {
+  overflow-y: auto;
+  max-height: 40vmin;
+}
+
+.modal {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  min-width: 60vw;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}

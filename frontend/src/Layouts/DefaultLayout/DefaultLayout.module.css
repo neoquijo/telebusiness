@@ -1,0 +1,29 @@
+.layoutWrapper {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  /* Размещаем элементы по вертикали */
+  flex: 1;
+}
+
+.topbar {
+  height: 5em;
+  /* Фиксированная высота */
+  flex-shrink: 0;
+  /* Не даём Topbar изменять размер */
+}
+
+.component {
+  flex: 1;
+  /* Занимает всё оставшееся пространство */
+  overflow: auto;
+  /* Добавляем прокрутку для содержимого, если оно превышает высоту */
+  box-sizing: border-box;
+  /* Учитываем padding */
+  padding: 1em;
+}

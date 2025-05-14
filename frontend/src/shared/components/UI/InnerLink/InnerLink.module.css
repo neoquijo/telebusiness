@@ -1,0 +1,9 @@
+.wrapper {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 10px;
+  color: var(--link-color);
+  font-weight: 900;
+}

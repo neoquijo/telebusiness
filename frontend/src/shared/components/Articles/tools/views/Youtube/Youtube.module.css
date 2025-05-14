@@ -1,0 +1,9 @@
+.time {
+  color: rgb(0, 174, 255);
+  cursor: pointer;
+}
+
+.timeCode {
+  display: flex;
+  gap: 5px;
+}

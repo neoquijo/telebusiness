@@ -1,0 +1,83 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+  height: 4em;
+  flex-shrink: 0;
+  background-color: var(--background-color);
+  box-shadow: var(--box-shadow-bottom);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.st {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 1em;
+}
+
+.nd {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+
+.icon {
+  font-size: 2.3em;
+  color: gray;
+}
+
+.user {
+  margin-right: 1em;
+  display: flex;
+  align-items: center;
+}
+
+.themePicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.themeIcon {
+  font-size: 1.2em;
+}
+
+.email {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.2em;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  gap: 5px
+}
+
+.col {
+  font-size: .8em;
+  display: flex;
+  flex-direction: column !important;
+}
+
+.avatar {
+  display: flex;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  justify-content: center;
+  align-items: center;
+  background-position: center;
+  background-size: cover;
+  margin-right: 1em;
+  border: 1px solid greenyellow;
+  overflow: hidden;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 100%;
+}
+
+.avatarImage {
+  width: 3rem;
+  height: 3rem;
+}

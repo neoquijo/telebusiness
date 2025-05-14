@@ -1,0 +1,35 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  position: relative;
+}
+
+.label {
+  font-size: 0.9em;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.textareaContainer {
+  margin-right: 1em;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 8px;
+}
+
+.textArea {
+  width: 100%;
+  min-height: 100px;
+  background-color: var(--bg-light);
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  font-size: 1.5em;
+  color: var(--text-color);
+  font-weight: 700;
+  padding: 8px;
+  resize: none;
+}

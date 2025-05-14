@@ -1,0 +1,14 @@
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  position: fixed;
+  background-color: var(--bg-modal);
+  color: var(--text-primary);
+  z-index: 99999999;
+  left: 0;
+}

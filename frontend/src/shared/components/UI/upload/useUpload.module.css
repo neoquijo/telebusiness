@@ -1,0 +1,110 @@
+.wrapper {
+  display: flex;
+  height: auto;
+}
+
+.inputField {
+  border-radius: 7px;
+  color: white;
+  font-weight: 700;
+  padding: 5px;
+  font-size: 2em;
+  outline: none;
+  border: none;
+  background-color: var(--input-bg);
+  width: 100% !important;
+}
+
+
+.uploadSection {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 2em;
+  width: 100%;
+  padding: 1em;
+  border: 4px solid var(--input-bg);
+}
+
+.upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bigIcon {
+  font-size: 3em;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.imagePreviewContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.imagePreview {
+  width: 110px;
+  height: 110px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  /* overflow: hidden; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  /* Для корректного позиционирования кнопки remove */
+}
+
+.previewImage {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.remove {
+  position: absolute;
+  top: -15px;
+  /* Задвигаем кнопку за верхнюю границу */
+  right: -15px;
+  /* Задвигаем кнопку за правую границу */
+  /* width: 30px;
+  height: 30px; */
+  padding: 4px;
+  color: white;
+  display: none;
+  transition: all 300ms;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  background-color: salmon;
+  font-weight: bold;
+  font-size: 2em;
+}
+
+.addImages {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-align: center;
+}
+
+.addImages:hover {
+  background-color: white;
+  color: black;
+}
+
+.imagePreview:hover>.remove {
+
+  display: flex;
+}
+
+.uploadLabel {}
