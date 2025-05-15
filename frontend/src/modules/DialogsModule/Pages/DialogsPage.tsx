@@ -32,7 +32,7 @@ const DialogsPage: React.FC = () => {
     { key: '', label: 'Все', icon: undefined },
     { key: 'User', label: 'Личные чаты', icon: FaUser },
     { key: 'Channel', label: 'Каналы', icon: FaBroadcastTower },
-    { key: 'Group', label: 'Группы', icon: IoIosChatboxes },
+    { key: 'Chat', label: 'Группы', icon: IoIosChatboxes },
     { key: 'Forum', label: 'Форумы', icon: RiRobot2Line },
   ];
 
