@@ -1,4 +1,3 @@
-// frontend/src/modules/DialogsModule/Pages/DialogsPage.tsx
 import React, { useState } from 'react';
 import { useGetChatsQuery } from '../../../API/chatsApi';
 import Button from '../../../shared/components/UI/Button/Button';
@@ -6,55 +5,36 @@ import SearchInput from '../../../shared/components/UI/SearchInput/SearchInput';
 import { BsFilter } from 'react-icons/bs';
 import { IoIosChatboxes } from 'react-icons/io';
 import { FaUser, FaBroadcastTower } from 'react-icons/fa';
-import { NormalizedDialog } from '../../../modules/AccountsModule/types';
-import { FilteredResponse } from '../../../API/types';
 import usePagination from '../../../shared/components/Navigation/Pagination/usePagination';
 import css from './DialogsPage.module.css';
 import DialogItem from './DialogItem';
 import { RiRobot2Line } from 'react-icons/ri';
+import { IoMdRefresh } from 'react-icons/io';
 
 const DialogsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState<string>('');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const { Pagination, page, limit } = usePagination(1, 20);
 
   const queryParams = new URLSearchParams({
+    searchQuery,
     page: page.toString(),
     limit: limit.toString(),
-    ...(searchQuery && { searchQuery }),
-    ...(filterType && { type: filterType })
+    orderBy: 'createdAt',
+    order,
+    type: filterType,
   }).toString();
 
-  const { data, isLoading, error } = useGetChatsQuery(queryParams);
-  const response = data as FilteredResponse<NormalizedDialog>;
+  const { data, isFetching, refetch } = useGetChatsQuery(queryParams);
 
   const filterButtons = [
-    { key: null, label: 'Все', icon: undefined },
+    { key: '', label: 'Все', icon: undefined },
     { key: 'User', label: 'Личные чаты', icon: FaUser },
     { key: 'Channel', label: 'Каналы', icon: FaBroadcastTower },
     { key: 'Group', label: 'Группы', icon: IoIosChatboxes },
-    { key: 'Forum', label: 'Форумы', icon: RiRobot2Line }
+    { key: 'Forum', label: 'Форумы', icon: RiRobot2Line },
   ];
-
-  if (isLoading) {
-    return (
-      <div className={css.loading}>
-        <div className={css.loadingContent}>
-          <div className={css.spinner}></div>
-          <p>Загрузка чатов...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={css.error}>
-        <h2>Ошибка загрузки</h2>
-        <p>Не удалось загрузить список чатов</p>
-      </div>
-    );
-  }
 
   return (
     <div className={css.container}>
@@ -66,7 +46,7 @@ const DialogsPage: React.FC = () => {
           </h1>
           <div className={css.stats}>
             <div className={css.statItem}>
-              <span className={css.statValue}>{response?.totalItems || 0}</span>
+              <span className={css.statValue}>{data?.totalItems || 0}</span>
               <span className={css.statLabel}>Всего чатов</span>
             </div>
           </div>
@@ -89,21 +69,34 @@ const DialogsPage: React.FC = () => {
                   key={key || 'all'}
                   variant="ghost"
                   active={filterType === key}
-                  onClick={() => setFilterType(filterType === key ? null : key)}
+                  onClick={() => setFilterType(filterType === key ? '' : key)}
                   icon={Icon}
                 >
                   {label}
                 </Button>
               ))}
             </div>
+            <Button
+              className={css.refreshButton}
+              onClick={() => refetch()}
+              title="Обновить список"
+            >
+              <IoMdRefresh size={20} />
+            </Button>
+
+            <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
+              {order === 'asc' ? '↑' : '↓'}
+            </Button>
           </div>
         </div>
       </div>
 
       <div className={css.content}>
         <div className={css.chatList}>
-          {response?.items && response.items.length > 0 ? (
-            response.items.map((chat, index) => (
+          {isFetching ? (
+            <div className={css.loading}>Загрузка чатов...</div>
+          ) : data?.items?.length! > 0 ? (
+            data?.items.map((chat, index) => (
               <DialogItem
                 key={chat.id}
                 chat={chat}
@@ -124,9 +117,9 @@ const DialogsPage: React.FC = () => {
           )}
         </div>
 
-        {response && response.totalPages > 1 && (
+        {data && data.totalPages > 1 && (
           <div className={css.paginationWrapper}>
-            <Pagination totalItems={response.totalItems} />
+            <Pagination totalItems={data.totalItems} />
           </div>
         )}
       </div>

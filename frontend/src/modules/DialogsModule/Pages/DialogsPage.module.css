@@ -1,7 +1,7 @@
 /* frontend/src/modules/DialogsModule/Pages/DialogsPage.module.css */
 .container {
   padding: 1.5rem;
-  height: 100vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
