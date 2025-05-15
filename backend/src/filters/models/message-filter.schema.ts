@@ -5,17 +5,22 @@ import { BaseDocument } from "src/Base/BaseDocument";
 @Schema()
 export class MessageFilter extends BaseDocument {
   @Prop({ type: Types.ObjectId, ref: 'User' })
-  user: Types.ObjectId
-  @Prop()
-  includesText: Array<string>
-  @Prop()
+  user: Types.ObjectId;
+
+  @Prop({ type: [String], default: [] })
+  includesText: string[];
+
+  @Prop({ required: true })
   name: string;
+
+  @Prop({ type: [String], default: [] })
+  excludesText: string[];
+
   @Prop()
-  excludesText: Array<string>
-  @Prop()
-  regexp: string
+  regexp: string;
+
   @Prop()
   callbackTopic: string;
 }
 
-export const messageFilterSchema = SchemaFactory.createForClass(MessageFilter)
+export const messageFilterSchema = SchemaFactory.createForClass(MessageFilter);

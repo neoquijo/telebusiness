@@ -32,6 +32,8 @@ export interface ReqFilters {
   periodOption?: string;
   role?: string;
   searchQuery?: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface DialogFilters {

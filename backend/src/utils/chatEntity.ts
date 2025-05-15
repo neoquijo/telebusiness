@@ -1,8 +1,6 @@
 import { Api, TelegramClient } from "telegram";
 import { Dialog } from "telegram/tl/custom/dialog";
 
-
-
 type TypeChat = Api.Chat | Api.Channel | Api.ChatEmpty | Api.ChatForbidden | Api.ChannelForbidden;
 type TypeUser = Api.User | Api.UserEmpty;
 
@@ -10,8 +8,8 @@ export function getTypedEntity(dialog: Dialog): TypeUser | TypeChat {
   const { entity } = dialog;
 
   if (!entity) throw new Error("Dialog has no entity");
-  if (entity.className === 'User') {
-    return entity as Api.User;
+  if (entity.className === 'User' || entity.className === 'UserEmpty') {
+    return entity as TypeUser;
   }
 
   if ([
@@ -30,7 +28,9 @@ export function getTypedEntity(dialog: Dialog): TypeUser | TypeChat {
 export function getEntityType(dialog: Dialog): "user" | "chat" | "channel" {
   const entity = getTypedEntity(dialog);
 
-  if (entity.className === 'User') return "user";
+  if (entity.className === 'User' || entity.className === 'UserEmpty') {
+    return "user";
+  }
 
   if (entity.className === 'Channel') {
     return (entity as Api.Channel).megagroup ? "chat" : "channel";
@@ -44,9 +44,9 @@ export function getEntityType(dialog: Dialog): "user" | "chat" | "channel" {
   ].includes(entity.className)) {
     return "chat";
   }
+
   throw new Error(`Unknown entity type: ${entity.className}`);
 }
-
 
 export type NormalizedDialog = {
   id: number;
@@ -57,13 +57,16 @@ export type NormalizedDialog = {
   unreadMentionsCount: number;
   participantsCount?: number;
   isBot: boolean;
-  // avatar?: Buffer;
   canSendMessages?: boolean;
-  type: string
+  type: string;
 };
 
 function isUser(entity: any): entity is Api.User {
   return entity?.className === 'User';
+}
+
+function isUserEmpty(entity: any): entity is Api.UserEmpty {
+  return entity?.className === 'UserEmpty';
 }
 
 function isChannel(entity: any): entity is Api.Channel {
@@ -86,7 +89,6 @@ function isChannelForbidden(entity: any): entity is Api.ChannelForbidden {
   return entity?.className === 'ChannelForbidden';
 }
 
-
 export async function normalizeDialog(
   client: any,
   dialog: Dialog
@@ -103,42 +105,40 @@ export async function normalizeDialog(
   let title = '';
   let description = '';
   let participantsCount: number | undefined;
-  let canSendMessages = true
-  let isBot = false
-  let broadcast = false
+  let canSendMessages = true;
+  let isBot = false;
+  let broadcast = false;
 
   if (isUser(entity)) {
     title = `@${entity.username || entity.phone} ${entity.firstName || ''} ${entity.lastName || ''}`.trim();
     description = entity.username || '';
-    isBot = entity.bot
+    isBot = entity.bot;
+  }
+
+  if (isUserEmpty(entity)) {
+    title = 'Deleted User';
+    description = 'User was deleted';
   }
 
   if (isChat(entity) || isChatForbidden(entity)) {
     title = entity.title;
   }
 
+  if (isChatEmpty(entity)) {
+    title = 'Empty Chat';
+  }
+
   if (isChannel(entity)) {
     title = entity.title;
     description = entity.username || '';
     participantsCount = entity.participantsCount;
-    canSendMessages = !entity.broadcast
-    broadcast = entity.broadcast
+    canSendMessages = !entity.broadcast;
+    broadcast = entity.broadcast;
   }
 
   if (isChannelForbidden(entity)) {
     title = entity.title;
   }
-
-  // Получаем фото
-  // let avatar: Buffer | undefined;
-  // try {
-  //   const photo = await client.downloadProfilePhoto(entity, { small: true });
-  //   if (photo && Buffer.isBuffer(photo)) {
-  //     avatar = photo;
-  //   }
-  // } catch (err) {
-  //   // Фото отсутствует или ошибка при загрузке
-  // }
 
   return {
     ...common,
@@ -148,7 +148,6 @@ export async function normalizeDialog(
     canSendMessages,
     isBot,
     broadcast,
-    // avatar,
-    type: dialog.entity.className
+    type: entity.className
   };
 }

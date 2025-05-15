@@ -3,13 +3,14 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model, Types } from "mongoose";
 import { Account } from "src/accounts/models/account.schema";
 import { MessageFilter } from "src/filters/models/message-filter.schema";
-
+import { MessageFilterService } from "src/filters/message-filter.service";
 import { AccountsStorage } from "src/accounts/accounts.storage";
 import { NewMessageEvent } from "telegram/events";
 import { TelegramMessage } from "src/messages/models/message.model";
 import { BaseTelegramClient } from "src/Base/BaseClient";
 import { StringSession } from "telegram/sessions";
-
+import { MessagesService } from "src/messages/messages.service";
+import { Api } from "telegram";
 
 @Injectable()
 export class ParserService implements OnModuleInit, OnModuleDestroy {
@@ -20,6 +21,8 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
     @InjectModel(MessageFilter.name) private readonly filterModel: Model<MessageFilter>,
     @InjectModel(TelegramMessage.name) private readonly messageModel: Model<TelegramMessage>,
     private readonly accountsStorage: AccountsStorage,
+    private readonly messageFilterService: MessageFilterService,
+    private readonly messagesService: MessagesService,
   ) { }
 
   async onModuleInit() {
@@ -41,22 +44,44 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async startParserForAccount(account: Account) {
-    let client = this.accountsStorage.getClient(account.id);
-    if (!client) {
-      client = new BaseTelegramClient({
-        session: new StringSession(account.sessionData),
-        apiId: Number(process.env.API_ID),
-        apiHash: process.env.API_HASH,
-        connectionRetries: 5,
-      });
-      this.accountsStorage.addClient(account.id, account.sessionData);
+    try {
+      let client = this.accountsStorage.getClient(account.id);
+
+      if (!client) {
+        client = new BaseTelegramClient({
+          session: new StringSession(account.sessionData),
+          apiId: Number(process.env.API_ID),
+          apiHash: process.env.API_HASH,
+          connectionRetries: 5,
+        });
+
+        await this.accountsStorage.addClient(account.id, account.sessionData);
+        client = this.accountsStorage.getClient(account.id);
+      }
+
+      if (!client) {
+        console.error(`Failed to get client for account ${account.id}`);
+        return;
+      }
+
+      if (client.status !== "active") {
+        await client.initialize();
+      }
+
+      const handler = this.createMessageHandler(account);
+      client.addMessageHandler(handler);
+      this.handlers.set(account.id, handler);
+
+      console.log(`Parser started for account ${account.id}`);
+    } catch (error) {
+      console.error(`Failed to start parser for account ${account.id}:`, error);
+
+      // Помечаем аккаунт как ошибочный
+      await this.accountModel.updateOne(
+        { id: account.id },
+        { status: 'error' }
+      );
     }
-    if (client.status !== "active") {
-      await client.initialize();
-    }
-    const handler = this.createMessageHandler(account);
-    client.addMessageHandler(handler);
-    this.handlers.set(account.id, handler);
   }
 
   private async stopParserForAccount(account: Account) {
@@ -66,85 +91,215 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
       if (handler) {
         client.removeMessageHandler(handler);
         this.handlers.delete(account.id);
+        console.log(`Parser stopped for account ${account.id}`);
       }
     }
   }
 
   private createMessageHandler(account: Account) {
     return async (event: NewMessageEvent) => {
-      const message = event.message;
-      const sender = await message.getSender();
-      const messageText = message.text || '';
-      const messageMedia = message.media ? [message.media] : [];
+      try {
+        const message = event.message;
+        const messageText = message.text || '';
 
-      const telegramMessage = new this.messageModel({
-        sender: sender ? sender.id : null,
-        accountId: account.accountId,
-        accountString: account.id,
-        user: account.user,
-        messageMedia,
-        messageText,
-        filtered: [],
-        filterNames: [],
-      });
+        // Получаем информацию об отправителе
+        let sender = null;
+        let sourceType: 'Chat' | 'Channel' | 'Private' | 'Group' = 'Private';
 
-      const filters = await this.filterModel.find({ user: account.user });
+        try {
+          sender = await message.getSender();
+          const chat = await message.getChat();
 
-      for (const filter of filters) {
-        if (this.filterMatches(messageText, filter)) {
-          telegramMessage.filtered.push(filter._id);
-          telegramMessage.filterNames.push(filter.name);
-          console.log(`Filter matched: ${filter.name}, callbackTopic: ${filter.callbackTopic}, message: ${messageText}`);
+          if (chat) {
+            // Используем правильную логику определения типа
+            if (chat instanceof Api.Channel) {
+              sourceType = chat.megagroup ? 'Group' : 'Channel';
+            } else if (chat instanceof Api.Chat) {
+              sourceType = 'Group';
+            } else if (chat instanceof Api.User) {
+              sourceType = 'Private';
+            } else {
+              // Fallback на className
+              // switch (chat.className) {
+              //   case 'Channel':
+              //     const channel = chat as Api.Channel;
+              //     sourceType = channel.megagroup ? 'Group' : 'Channel';
+              //     break;
+              //   case 'Chat':
+              //     sourceType = 'Group';
+              //     break;
+              //   case 'User':
+              //     sourceType = 'Private';
+              //     break;
+              //   default:
+              //     sourceType = 'Private';
+              // }
+            }
+          }
+        } catch (error) {
+          console.error('Error getting message details:', error);
         }
-      }
 
-      await telegramMessage.save();
+        // Создаем объект сообщения
+        const telegramMessage: Partial<TelegramMessage> = {
+          sender: sender ? sender.id : null,
+          sourceType,
+          accountId: account.accountId,
+          accountString: account.id,
+          user: account.user,
+          messageMedia: message.media ? [message.media] : [],
+          messageText,
+          filtered: [],
+          filterNames: [],
+          generatedTags: [],
+          lang: null, // Можно добавить определение языка
+        };
+
+        // Получаем фильтры пользователя
+        const filters = await this.messageFilterService.getUserFiltersForAccount(account.user._id);
+        console.log('filters:')
+        console.log(filters)
+        // Проверяем сообщение против каждого фильтра
+        for (const filter of filters) {
+          if (this.messageFilterService.checkFilterMatches(messageText, filter)) {
+            telegramMessage.filtered.push(filter._id);
+            telegramMessage.filterNames.push(filter.name);
+
+            console.log(`Message filtered by "${filter.name}": ${messageText.substring(0, 100)}...`);
+
+            // Здесь можно добавить логику для отправки уведомлений
+            // или выполнения действий по callbackTopic
+            if (filter.callbackTopic) {
+              await this.handleFilterCallback(filter.callbackTopic, telegramMessage, filter);
+            }
+          }
+        }
+
+        // Сохраняем сообщение
+        await this.messagesService.createMessage(telegramMessage);
+
+      } catch (error) {
+        console.error(`Error processing message from account ${account.id}:`, error);
+      }
     };
   }
 
-  private filterMatches(messageText: string, filter: MessageFilter): boolean {
-    if (filter.includesText && filter.includesText.length > 0) {
-      for (const text of filter.includesText) {
-        if (!messageText.includes(text)) {
-          return false;
-        }
+  private async handleFilterCallback(callbackTopic: string, message: any, filter: MessageFilter) {
+    try {
+      // Здесь можно реализовать различные типы callback'ов
+      // Например: отправка HTTP запроса, запись в файл, отправка email и т.д.
+      console.log(`Executing callback for topic "${callbackTopic}"`);
+      console.log(`Filter: ${filter.name}, Message: ${message.messageText}`);
+
+      // Пример реализации различных типов callback'ов:
+      switch (callbackTopic) {
+        case 'webhook':
+          // await this.sendWebhook(message, filter);
+          break;
+        case 'email':
+          // await this.sendEmail(message, filter);
+          break;
+        case 'log':
+          console.log(`[FILTER LOG] ${filter.name}: ${message.messageText}`);
+          break;
+        default:
+          console.log(`Unknown callback topic: ${callbackTopic}`);
       }
+    } catch (error) {
+      console.error(`Error handling callback for topic ${callbackTopic}:`, error);
     }
-    if (filter.excludesText && filter.excludesText.length > 0) {
-      for (const text of filter.excludesText) {
-        if (messageText.includes(text)) {
-          return false;
-        }
-      }
-    }
-    if (filter.regexp) {
-      try {
-        const regex = new RegExp(filter.regexp);
-        if (!regex.test(messageText)) {
-          return false;
-        }
-      } catch (error) {
-        console.error(`Invalid regexp in filter ${filter.name}: ${filter.regexp}`);
-        return false;
-      }
-    }
-    return true;
   }
 
   private setupChangeStream() {
-    const changeStream = this.accountModel.watch();
-    changeStream.on("change", async (change) => {
-      if (change.operationType === "update") {
-        const accountId = change.documentKey._id;
-        const account = await this.accountModel.findById(accountId);
-        if (account) {
-          if (account.parsingEnabled) {
-            await this.startParserForAccount(account);
-          } else {
-            await this.stopParserForAccount(account);
+    try {
+      const changeStream = this.accountModel.watch();
+
+      changeStream.on("change", async (change) => {
+        try {
+          if (change.operationType === "update") {
+            const accountId = change.documentKey._id;
+            const account = await this.accountModel.findById(accountId);
+
+            if (account) {
+              const wasParsingEnabled = this.handlers.has(account.id);
+
+              if (account.parsingEnabled && !wasParsingEnabled) {
+                await this.startParserForAccount(account);
+              } else if (!account.parsingEnabled && wasParsingEnabled) {
+                await this.stopParserForAccount(account);
+              }
+            }
           }
+        } catch (error) {
+          console.error('Error in change stream handler:', error);
+        }
+      });
+
+      changeStream.on("error", (error) => {
+        console.error('Change stream error:', error);
+      });
+
+    } catch (error) {
+      console.error('Error setting up change stream:', error);
+    }
+  }
+
+  // Публичные методы для управления парсером
+  async enableParsingForAccount(accountId: string) {
+    try {
+      const account = await this.accountModel.findOne({ id: accountId });
+      if (account) {
+        await this.accountModel.updateOne(
+          { id: accountId },
+          { parsingEnabled: true }
+        );
+
+        if (!this.handlers.has(accountId)) {
+          await this.startParserForAccount(account);
         }
       }
-    });
+    } catch (error) {
+      console.error(`Error enabling parsing for account ${accountId}:`, error);
+      throw error;
+    }
+  }
+
+  async disableParsingForAccount(accountId: string) {
+    try {
+      await this.accountModel.updateOne(
+        { id: accountId },
+        { parsingEnabled: false }
+      );
+
+      const account = await this.accountModel.findOne({ id: accountId });
+      if (account && this.handlers.has(accountId)) {
+        await this.stopParserForAccount(account);
+      }
+    } catch (error) {
+      console.error(`Error disabling parsing for account ${accountId}:`, error);
+      throw error;
+    }
+  }
+
+  async getParsingStatus() {
+    try {
+      const activeAccounts = await this.accountModel.find({ parsingEnabled: true });
+      const status = {
+        totalAccounts: activeAccounts.length,
+        activeHandlers: this.handlers.size,
+        accounts: activeAccounts.map(account => ({
+          id: account.id,
+          name: account.name,
+          username: account.username,
+          status: account.status,
+          hasHandler: this.handlers.has(account.id)
+        }))
+      };
+
+      return status;
+    } catch (error) {
+      console.error('Error getting parsing status:', error);
+      throw error;
+    }
   }
 }
