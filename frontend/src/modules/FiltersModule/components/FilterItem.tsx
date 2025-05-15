@@ -1,152 +1,130 @@
-// src/modules/FiltersModule/components/FilterItem.tsx
-import { FC, useState } from 'react';
-import css from './FilterItem.module.css';
+// frontend/src/modules/FiltersModule/Components/FilterItem.tsx
+import React from 'react';
+import { BsFilter } from 'react-icons/bs';
+import { MdEdit, MdDelete } from 'react-icons/md';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 import { MessageFilter } from '../../../API/filtersApi';
-import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash, FaEye, FaCheck, FaTimes } from 'react-icons/fa';
 import Button from '../../../shared/components/UI/Button/Button';
-import { useDeleteFilterMutation } from '../../../API/filtersApi';
-import { infoSuccess, infoError } from '../../../shared/lib/toastWrapper';
-import { useModalManager } from '../../../core/providers/modal/ModalProvider';
-import TestFilterModal from '../modals/TestFilterModal';
+import css from './FilterItem.module.css';
 
-interface IProps {
+interface FilterItemProps {
   filter: MessageFilter;
+  index: number;
+  searchQuery?: string;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-const FilterItem: FC<IProps> = ({ filter }) => {
-  const navigate = useNavigate();
-  const modal = useModalManager();
-  const [deleteFilter, { isLoading: isDeleting }] = useDeleteFilterMutation();
-  const [showConfirm, setShowConfirm] = useState(false);
+const highlightText = (text: string, query: string) => {
+  if (!query.trim()) return text;
+  const regex = new RegExp(`(${query})`, 'gi');
+  return text.split(regex).map((part, index) =>
+    regex.test(part) ? (
+      <span key={index} className={css.highlight}>
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
 
-  const handleDelete = async () => {
-    try {
-      await deleteFilter(filter.id).unwrap();
-      infoSuccess('Фильтр удален');
-      setShowConfirm(false);
-    } catch (error) {
-      infoError('Ошибка при удалении фильтра');
-      console.error('Delete error:', error);
-    }
-  };
-
-  const handleTest = () => {
-    modal.openModal(
-      'testFilter',
-      <TestFilterModal filterId={filter.id} filterName={filter.name} />,
-      { title: `Тестирование фильтра: ${filter.name}` }
-    );
+const FilterItem: React.FC<FilterItemProps> = ({
+  filter,
+  index,
+  searchQuery = '',
+  onEdit,
+  onDelete
+}) => {
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp).toLocaleDateString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   return (
-    <div className={css.wrapper}>
-      <div className={css.content}>
-        <div className={css.header}>
-          <h3 className={css.name}>{filter.name}</h3>
-          <div className={css.actions}>
-            <Button
-              variant="ghost"
+    <div className={`${css.item} ${index % 2 === 0 ? css.even : css.odd}`}>
+      <div className={css.main}>
+        <div className={css.content}>
+          <div className={css.header}>
+            <h3 className={css.title}>
+              <BsFilter className={css.titleIcon} />
+              {searchQuery ? highlightText(filter.name, searchQuery) : filter.name}
+            </h3>
+            <div className={css.meta}>
+              <span className={css.date}>
+                Создан: {formatDate(filter.createdAt)}
+              </span>
+            </div>
+          </div>
 
-              icon={FaEye}
-              onClick={() => navigate(`/filters/${filter.id}`)}
-              title="Просмотр"
-            />
-            <Button
-              variant="ghost"
+          <div className={css.rules}>
+            {filter.includesText && filter.includesText.length > 0 && (
+              <div className={css.rule}>
+                <FaCheck className={css.ruleIcon} style={{ color: '#4caf50' }} />
+                <span className={css.ruleLabel}>Содержит:</span>
+                <div className={css.ruleTags}>
+                  {filter.includesText.map((text, idx) => (
+                    <span key={idx} className={css.includeTag}>
+                      {text}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
-              icon={FaEdit}
-              onClick={() => navigate(`/filters/${filter.id}?edit=true`)}
-              title="Редактировать"
-            />
-            <Button
-              variant="ghost"
+            {filter.excludesText && filter.excludesText.length > 0 && (
+              <div className={css.rule}>
+                <FaTimes className={css.ruleIcon} style={{ color: '#f44336' }} />
+                <span className={css.ruleLabel}>Исключает:</span>
+                <div className={css.ruleTags}>
+                  {filter.excludesText.map((text, idx) => (
+                    <span key={idx} className={css.excludeTag}>
+                      {text}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
-              onClick={handleTest}
-              title="Тестировать"
-            >
-              Тест
-            </Button>
-            {!showConfirm ? (
-              <Button
-                variant="ghost"
+            {filter.regexp && (
+              <div className={css.rule}>
+                <span className={css.ruleLabel}>RegExp:</span>
+                <code className={css.regexp}>{filter.regexp}</code>
+              </div>
+            )}
 
-                icon={FaTrash}
-                onClick={() => setShowConfirm(true)}
-                title="Удалить"
-                className={css.deleteButton}
-              />
-            ) : (
-              <div className={css.confirmActions}>
-                <Button
-                  variant="danger"
-
-                  icon={FaCheck}
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                >
-                  Да
-                </Button>
-                <Button
-                  variant="ghost"
-
-                  icon={FaTimes}
-                  onClick={() => setShowConfirm(false)}
-                >
-                  Нет
-                </Button>
+            {filter.callbackTopic && (
+              <div className={css.rule}>
+                <span className={css.ruleLabel}>Callback Topic:</span>
+                <span className={css.callbackTopic}>{filter.callbackTopic}</span>
               </div>
             )}
           </div>
         </div>
+      </div>
 
-        <div className={css.details}>
-          {filter.includesText && filter.includesText.length > 0 && (
-            <div className={css.condition}>
-              <span className={css.label}>Включает:</span>
-              <div className={css.tags}>
-                {filter.includesText.map((text, index) => (
-                  <span key={index} className={`${css.tag} ${css.includes}`}>
-                    {text}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {filter.excludesText && filter.excludesText.length > 0 && (
-            <div className={css.condition}>
-              <span className={css.label}>Исключает:</span>
-              <div className={css.tags}>
-                {filter.excludesText.map((text, index) => (
-                  <span key={index} className={`${css.tag} ${css.excludes}`}>
-                    {text}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {filter.regexp && (
-            <div className={css.condition}>
-              <span className={css.label}>Регулярное выражение:</span>
-              <code className={css.regexp}>{filter.regexp}</code>
-            </div>
-          )}
-
-          {filter.callbackTopic && (
-            <div className={css.condition}>
-              <span className={css.label}>Callback:</span>
-              <span className={css.callback}>{filter.callbackTopic}</span>
-            </div>
-          )}
-        </div>
-
-        <div className={css.meta}>
-          <span className={css.date}>
-            Создан: {new Date(filter.createdAt).toLocaleDateString('ru-RU')}
-          </span>
-        </div>
+      <div className={css.actions}>
+        <Button
+          variant="ghost"
+          icon={MdEdit}
+          onClick={() => onEdit(filter.id)}
+          title="Редактировать фильтр"
+        >
+          Изменить
+        </Button>
+        <Button
+          variant="danger"
+          icon={MdDelete}
+          onClick={() => onDelete(filter.id)}
+          title="Удалить фильтр"
+        >
+          Удалить
+        </Button>
       </div>
     </div>
   );
