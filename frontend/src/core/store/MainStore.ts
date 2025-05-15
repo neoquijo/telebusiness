@@ -1,3 +1,4 @@
+// src/core/store/MainStore.ts (обновленный)
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { authApi } from '../../API/authApi';
@@ -11,8 +12,8 @@ import { accountsApi } from '../../API/accountsApi';
 import { accountSlice } from './slices/accountSlice';
 import { dialogSlice } from './slices/dialogSlice';
 import { chatsApi } from '../../API/chatsApi';
-// import { apiListenerMiddleware } from '../../API/middlewares/apiListenerMiddleware';
-
+import { filtersApi } from '../../API/filtersApi';
+import { messagesApi } from '../../API/messagesApi';
 
 export const mainStore = configureStore({
   reducer: {
@@ -20,6 +21,8 @@ export const mainStore = configureStore({
     [usersApi.reducerPath]: usersApi.reducer,
     [accountsApi.reducerPath]: accountsApi.reducer,
     [chatsApi.reducerPath]: chatsApi.reducer,
+    [filtersApi.reducerPath]: filtersApi.reducer,
+    [messagesApi.reducerPath]: messagesApi.reducer,
     account: accountSlice.reducer,
     auth: authSlice.reducer,
     canvas: canvasSlice.reducer,
@@ -30,10 +33,12 @@ export const mainStore = configureStore({
     getDefaultMiddleware()
       .concat(isLoadingMiddleware)
       .concat(rtkQueryErrorLogger)
-      .concat(accountsApi.middleware)
       .concat(authApi.middleware)
+      .concat(usersApi.middleware)
+      .concat(accountsApi.middleware)
       .concat(chatsApi.middleware)
-  // .concat(apiListenerMiddleware.middleware)
+      .concat(filtersApi.middleware)
+      .concat(messagesApi.middleware)
 });
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector

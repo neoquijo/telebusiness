@@ -13,6 +13,8 @@ import { BrowserRouter } from "react-router-dom";
 import { accountsModule } from "../../modules/AccountsModule/AccountsModule";
 import { dialogsModule } from "../../modules/DialogsModule/DialogsModule";
 import { tasksModule } from "../../modules/TasksModule/TasksModule";
+import { filtersModule } from "../../modules/FiltersModule/FiltersModule";
+import { messagesModule } from "../../modules/MessagesModule/MessagesModule";
 
 const registry = ModuleRegistry.getInstance();
 const router = new AppRouter();
@@ -21,6 +23,8 @@ registry.registerModules([
   authModule,
   accountsModule,
   dialogsModule,
+  filtersModule,
+  messagesModule,
   tasksModule
 ]);
 router.addRoutes(registry.getAllRoutes());

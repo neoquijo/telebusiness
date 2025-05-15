@@ -1,0 +1,194 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.titleIcon {
+  color: var(--color-primary);
+}
+
+.headerActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.filterSection {
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--bg-secondary);
+}
+
+.dateFilters {
+  display: flex;
+  justify-content: center;
+}
+
+.dateGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.calendarIcon {
+  color: var(--color-primary);
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--color-text-muted);
+  font-size: 1.125rem;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.overviewCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cardIcon {
+  font-size: 2.5rem;
+  border-radius: 12px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+}
+
+.cardContent {
+  flex: 1;
+}
+
+.cardValue {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--color-text);
+  margin-bottom: 0.25rem;
+}
+
+.cardLabel {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.chartsSection {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.chartCard {
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--bg-secondary);
+}
+
+.chartTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 1rem;
+}
+
+.filtersList,
+.accountsList {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.filterItem,
+.accountItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
+}
+
+.filterRank,
+.accountRank {
+  background-color: var(--color-primary);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.875rem;
+}
+
+.filterName,
+.accountName {
+  flex: 1;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.filterCount,
+.accountCount {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  background-color: var(--bg-tertiary);
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+}
+
+.noData {
+  text-align: center;
+  color: var(--color-text-muted);
+  padding: 2rem;
+  font-style: italic;
+}
