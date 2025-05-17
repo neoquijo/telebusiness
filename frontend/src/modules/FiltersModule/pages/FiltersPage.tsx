@@ -1,4 +1,3 @@
-// frontend/src/modules/FiltersModule/Pages/FiltersPage.tsx
 import React, { useState } from 'react';
 import { useGetFiltersQuery, useDeleteFilterMutation } from '../../../API/filtersApi';
 import Button from '../../../shared/components/UI/Button/Button';
@@ -13,47 +12,31 @@ import FilterItem from '../components/FilterItem';
 const FiltersPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const { Pagination, page, limit } = usePagination(1, 20);
   const [deleteFilter] = useDeleteFilterMutation();
 
   const queryParams = new URLSearchParams({
+    searchQuery,
     page: page.toString(),
     limit: limit.toString(),
-    ...(searchQuery && { searchQuery })
+    orderBy: 'createdAt',
+    order,
   }).toString();
 
-  const { data, isLoading, error } = useGetFiltersQuery(queryParams);
+  const { data, isFetching, refetch } = useGetFiltersQuery(queryParams);
 
   const handleDeleteFilter = async (id: string) => {
     if (window.confirm('Вы уверены, что хотите удалить этот фильтр?')) {
       try {
         await deleteFilter(id).unwrap();
         infoSuccess('Фильтр успешно удален');
+        refetch();
       } catch (error) {
         infoError('Ошибка при удалении фильтра');
       }
     }
   };
-
-  if (isLoading) {
-    return (
-      <div className={css.loading}>
-        <div className={css.loadingContent}>
-          <div className={css.spinner}></div>
-          <p>Загрузка фильтров...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={css.error}>
-        <h2>Ошибка загрузки</h2>
-        <p>Не удалось загрузить список фильтров</p>
-      </div>
-    );
-  }
 
   return (
     <div className={css.container}>
@@ -87,13 +70,27 @@ const FiltersPage: React.FC = () => {
           >
             Создать фильтр
           </Button>
+
+          <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
+            {order === 'asc' ? '↑' : '↓'}
+          </Button>
+
+          <Button
+            className={css.refreshButton}
+            onClick={() => refetch()}
+            title="Обновить список"
+          >
+            Обновить
+          </Button>
         </div>
       </div>
 
       <div className={css.content}>
         <div className={css.filterList}>
-          {data?.items && data.items.length > 0 ? (
-            data.items.map((filter, index) => (
+          {isFetching ? (
+            <div className={css.loading}>Загрузка фильтров...</div>
+          ) : data?.items?.length! > 0 ? (
+            data?.items.map((filter, index) => (
               <FilterItem
                 key={filter.id}
                 filter={filter}

@@ -156,7 +156,7 @@ ul {
   /* Тёмная тема - фон */
   --text-color: white;
   /* Тёмная тема - текст */
-  --bg-primary: rgba(47, 47, 65, 0.534);
+  --bg-primary: rgba(47, 47, 65, 0.106);
   /* Тёмная тема - основной фон элемента */
   --bg-hover: #6e6b6b;
   /* Тёмная тема - фон при наведении */
@@ -237,8 +237,12 @@ body {
 }
 
 h1 {
-  font-size: 3.2em;
+  font-size: 1.75em;
   line-height: 1.1;
+}
+
+h2 {
+  font-size: 1.2em !important;
 }
 
 button {

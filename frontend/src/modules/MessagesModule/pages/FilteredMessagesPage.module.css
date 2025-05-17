@@ -1,4 +1,4 @@
-/* frontend/src/modules/MessagesModule/Pages/MessagesPage.module.css */
+/* frontend/src/modules/MessagesModule/Pages/FilteredMessagesPage.module.css */
 .container {
   padding: 1.5rem;
   height: 90vh;
@@ -26,7 +26,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.75rem !important;
+  font-size: 1.75em !important;
   font-weight: 600;
   color: var(--text-color);
   margin: 0;
@@ -52,7 +52,7 @@
 .controls {
   display: flex;
   gap: 1.5rem;
-  align-items: center;
+  align-items: flex-end;
   flex-wrap: wrap;
 }
 
@@ -63,19 +63,31 @@
 
 .filterSection {
   display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.filterIcon {
-  font-size: 1.25rem;
-  color: var(--text-secondary);
-}
-
-.filterButtons {
-  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  flex-wrap: wrap;
+}
+
+.filterLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.filterSelect {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--bg-light);
+  color: var(--text-color);
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.filterSelect:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.1);
 }
 
 .content {
@@ -116,7 +128,7 @@
 
 .emptyState p {
   max-width: 300px;
-  margin: 0;
+  margin: 0 0 1.5rem 0;
 }
 
 .paginationWrapper {
@@ -168,6 +180,11 @@
     gap: 1rem;
   }
 
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
   .statistics {
     grid-template-columns: 1fr;
   }
@@ -178,9 +195,11 @@
   }
 
   .filterSection {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .filterSelect {
+    min-width: auto;
   }
 
   .title {
@@ -193,15 +212,26 @@
 }
 
 @media (max-width: 480px) {
-  .filterButtons {
-    justify-content: center;
-  }
-
   .searchSection {
     min-width: auto;
+  }
+
+  .headerActions {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   .statistics {
     gap: 0.75rem;
   }
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .filterSelect {
+  background-color: var(--bg-dark);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .filterSelect:focus {
+  box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.15);
 }
