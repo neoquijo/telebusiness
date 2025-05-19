@@ -13,8 +13,8 @@ export class TelegramMessage extends BaseDocument {
   @Prop()
   accountId: Number;
 
-  @Prop({ type: [String], default: [] })
-  generatedTags: string[];
+  @Prop()
+  generatedTags: Array<string>;
 
   @Prop()
   lang: string;
@@ -25,8 +25,8 @@ export class TelegramMessage extends BaseDocument {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   user: Types.ObjectId;
 
-  @Prop({ type: [Object], default: [] })
-  messageMedia: any[];
+  @Prop()
+  messageMedia: [];
 
   @Prop()
   messageText: String;
@@ -36,6 +36,9 @@ export class TelegramMessage extends BaseDocument {
 
   @Prop({ type: [String] })
   filterNames: string[];
+
+  @Prop({ default: false })
+  aiProcessed: boolean;
 }
 
 export const telegramMessageSchema = SchemaFactory.createForClass(TelegramMessage);

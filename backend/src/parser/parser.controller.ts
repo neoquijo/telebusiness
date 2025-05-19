@@ -1,38 +1,29 @@
-import { Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
-import { ParserService } from "./parser.service";
-import { AuthGuard, AdminGuard } from "src/auth/user.guard";
-import { CurrentUser } from "src/auth/user.decorator";
-import { User } from "src/users/models/user.schema";
+import { Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { ParserService } from './parser.service';
+import { AuthGuard } from 'src/auth/user.guard';
 
+@UseGuards(AuthGuard)
 @Controller('parser')
 export class ParserController {
-  constructor(
-    private readonly parserService: ParserService
-  ) { }
+  constructor(private readonly parserService: ParserService) { }
 
-  @UseGuards(AdminGuard)
   @Get('/status')
   async getParsingStatus() {
     return await this.parserService.getParsingStatus();
   }
 
-  @UseGuards(AuthGuard)
-  @Post('/enable/:accountId')
-  async enableParsing(
-    @Param('accountId') accountId: string,
-    @CurrentUser() user: User
-  ) {
-    await this.parserService.enableParsingForAccount(accountId);
-    return { message: `Parsing enabled for account ${accountId}` };
+  @Post('/account/:id/enable')
+  async enableParsingForAccount(@Param('id') id: string) {
+    return await this.parserService.enableParsingForAccount(id);
   }
 
-  @UseGuards(AuthGuard)
-  @Post('/disable/:accountId')
-  async disableParsing(
-    @Param('accountId') accountId: string,
-    @CurrentUser() user: User
-  ) {
-    await this.parserService.disableParsingForAccount(accountId);
-    return { message: `Parsing disabled for account ${accountId}` };
+  @Post('/account/:id/disable')
+  async disableParsingForAccount(@Param('id') id: string) {
+    return await this.parserService.disableParsingForAccount(id);
+  }
+
+  @Post('/filter/:id/process')
+  async triggerBatchProcessing(@Param('id') id: string) {
+    return await this.parserService.triggerBatchProcessing(id);
   }
 }

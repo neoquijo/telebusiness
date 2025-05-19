@@ -2,9 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TelegramClientFactory } from './telegram/telegram';
 import { StringSession } from 'telegram/sessions';
-import { NewMessageEvent } from 'telegram/events';
-import { Api } from 'telegram';
-import { nc } from './nats';
+// import { NewMessageEvent } from 'telegram/events';
+// import { Api } from 'telegram';
+// import { nc } from './nats';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -20,13 +20,13 @@ async function bootstrap() {
 
 
 
-  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-  let defaultDelayMs = 50000;
-  const client = await TelegramClientFactory.getClient('8U7-VLCQ');
+  // const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  // let defaultDelayMs = 50000;
+  // const client = await TelegramClientFactory.getClient('8U7-VLCQ');
 
 
   // console.log(await client.getMe())
-  const nats = await nc()
+  // const nats = await nc()
 
 
   // nats.on('algo', async (req, res) => {

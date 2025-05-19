@@ -1,55 +1,74 @@
-import { IsArray, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateMessageFilterDto {
   @IsString()
-  @MinLength(1)
   name: string;
 
-  @IsOptional()
   @IsArray()
-  @IsString({ each: true })
+  @IsOptional()
   includesText?: string[];
 
-  @IsOptional()
   @IsArray()
-  @IsString({ each: true })
+  @IsOptional()
   excludesText?: string[];
 
+  @IsArray()
   @IsOptional()
+  includesAll?: string[];
+
+  @IsBoolean()
+  @IsOptional()
+  includesMedia?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  excludesMedia?: boolean;
+
   @IsString()
+  @IsOptional()
   regexp?: string;
 
-  @IsOptional()
   @IsString()
+  @IsOptional()
   callbackTopic?: string;
+
+  @IsString()
+  @IsOptional()
+  matchGoal?: string;
+
+  @IsNumber()
+  @IsOptional()
+  batchSizeCharacters?: number;
+
+  @IsNumber()
+  @IsOptional()
+  batchSizeMessages?: number;
 }
 
-export class UpdateMessageFilterDto {
-  @IsOptional()
-  @IsString()
-  @MinLength(1)
-  name?: string;
+export class UpdateMessageFilterDto extends CreateMessageFilterDto { }
 
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  includesText?: string[];
-
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  excludesText?: string[];
-
-  @IsOptional()
-  @IsString()
-  regexp?: string;
-
-  @IsOptional()
-  @IsString()
-  callbackTopic?: string;
+export interface NormalizedMessage {
+  id: string;
+  text: string;
+  sender: number;
+  senderUsername?: string;
+  chatId: number;
+  chatTitle: string;
+  chatType: string;
+  media: any[];
+  sentAt: Date;
 }
 
-export class TestFilterDto {
-  @IsString()
-  messageText: string;
+export interface AIAnalysisResult {
+  messageId: string;
+  sender: number;
+  user: string;
+  account: string;
+  isLead: boolean;
+  messageType: "buyOffer" | "saleOffer" | "jobOffer" | "jobNeeded" | "serviceOffer" | "offtopic";
+  mainCategory: string;
+  keywords: string[];
+  lang: string;
+  confidence?: number;
+  isScam?: boolean;
 }

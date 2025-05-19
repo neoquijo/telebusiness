@@ -11,10 +11,13 @@ import { BaseTelegramClient } from "src/Base/BaseClient";
 import { StringSession } from "telegram/sessions";
 import { MessagesService } from "src/messages/messages.service";
 import { Api } from "telegram";
+import { LeadService } from "src/leads/lead.service";
+import { ArtificialIntelligenceService } from "src/artificial-intelligence/artificial-intelligence.service";
 
 @Injectable()
 export class ParserService implements OnModuleInit, OnModuleDestroy {
   private handlers: Map<string, (event: NewMessageEvent) => void> = new Map();
+  private processingFilters = new Set<string>(); // Track filters currently being processed
 
   constructor(
     @InjectModel(Account.name) private readonly accountModel: Model<Account>,
@@ -23,6 +26,8 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
     private readonly accountsStorage: AccountsStorage,
     private readonly messageFilterService: MessageFilterService,
     private readonly messagesService: MessagesService,
+    private readonly aiService: ArtificialIntelligenceService,
+    private readonly leadService: LeadService
   ) { }
 
   async onModuleInit() {
@@ -76,7 +81,7 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       console.error(`Failed to start parser for account ${account.id}:`, error);
 
-      // Помечаем аккаунт как ошибочный
+      // Mark account as having an error
       await this.accountModel.updateOne(
         { id: account.id },
         { status: 'error' }
@@ -102,7 +107,7 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
         const message = event.message;
         const messageText = message.text || '';
 
-        // Получаем информацию об отправителе
+        // Get information about sender and chat
         let sender = null;
         let sourceType: 'Chat' | 'Channel' | 'Private' | 'Group' = 'Private';
 
@@ -111,7 +116,7 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
           const chat = await message.getChat();
 
           if (chat) {
-            // Используем правильную логику определения типа
+            // Determine the type of chat
             if (chat instanceof Api.Channel) {
               sourceType = chat.megagroup ? 'Group' : 'Channel';
             } else if (chat instanceof Api.Chat) {
@@ -119,7 +124,8 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
             } else if (chat instanceof Api.User) {
               sourceType = 'Private';
             } else {
-              // Fallback на className
+
+              // Fallback to className
               // switch (chat.className) {
               //   case 'Channel':
               //     const channel = chat as Api.Channel;
@@ -140,8 +146,8 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
           console.error('Error getting message details:', error);
         }
 
-        // Создаем объект сообщения
-        const telegramMessage: Partial<TelegramMessage> = {
+        // Create the message object
+        const telegramMessage = new this.messageModel({
           sender: sender ? sender.id : null,
           sourceType,
           accountId: account.accountId,
@@ -152,69 +158,120 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
           filtered: [],
           filterNames: [],
           generatedTags: [],
-          lang: null, // Можно добавить определение языка
-        };
+          lang: null, // Will be determined by AI
+          aiProcessed: false
+        });
 
-        // Получаем фильтры пользователя
-        const filters = await this.messageFilterService.getUserFiltersForAccount(account.user._id);
-        console.log('filters:')
-        console.log(filters)
-        // Проверяем сообщение против каждого фильтра
+        // Get the user's filters
+        const filters = await this.messageFilterService.getUserFiltersForAccount(account.user.toString());
+
+        const matchingFilters: MessageFilter[] = [];
+
+        // Check message against each filter
         for (const filter of filters) {
-          if (this.messageFilterService.checkFilterMatches(messageText, filter)) {
+          if (this.messageFilterService.checkFilterMatches(
+            messageText,
+            filter,
+            telegramMessage.messageMedia
+          )) {
             telegramMessage.filtered.push(filter._id);
             telegramMessage.filterNames.push(filter.name);
+            matchingFilters.push(filter);
 
-            console.log(`Message filtered by "${filter.name}": ${messageText.substring(0, 100)}...`);
-
-            // Здесь можно добавить логику для отправки уведомлений
-            // или выполнения действий по callbackTopic
-            if (filter.callbackTopic) {
-              await this.handleFilterCallback(filter.callbackTopic, telegramMessage, filter);
-            }
+            console.log(`Filter matched: ${filter.name}, message: ${messageText.substring(0, 100)}...`);
           }
         }
 
-        // Сохраняем сообщение
-        await this.messagesService.createMessage(telegramMessage);
+        // Save the message
+        await telegramMessage.save();
 
+        // Process batch for each matching filter
+        for (const filter of matchingFilters) {
+          // Update filter batch counters
+          const updatedFilter = await this.messageFilterService.incrementBatchCounters(filter, messageText);
+
+          // Check if batch limits reached
+          if (updatedFilter) {
+            const batchLimitsReached = await this.messageFilterService.checkBatchLimits(updatedFilter);
+
+            if (batchLimitsReached) {
+              // Process batch if not already processing this filter
+              if (!this.processingFilters.has(updatedFilter.id)) {
+                this.processBatch(updatedFilter);
+              }
+            }
+          }
+        }
       } catch (error) {
         console.error(`Error processing message from account ${account.id}:`, error);
       }
     };
   }
 
-  private async handleFilterCallback(callbackTopic: string, message: any, filter: MessageFilter) {
+  private async processBatch(filter: MessageFilter) {
     try {
-      // Здесь можно реализовать различные типы callback'ов
-      // Например: отправка HTTP запроса, запись в файл, отправка email и т.д.
-      console.log(`Executing callback for topic "${callbackTopic}"`);
-      console.log(`Filter: ${filter.name}, Message: ${message.messageText}`);
+      // Mark filter as being processed
+      this.processingFilters.add(filter.id);
 
-      // Пример реализации различных типов callback'ов:
-      switch (callbackTopic) {
-        case 'webhook':
-          // await this.sendWebhook(message, filter);
-          break;
-        case 'email':
-          // await this.sendEmail(message, filter);
-          break;
-        case 'log':
-          console.log(`[FILTER LOG] ${filter.name}: ${message.messageText}`);
-          break;
-        default:
-          console.log(`Unknown callback topic: ${callbackTopic}`);
+      console.log(`Processing batch for filter: ${filter.name}`);
+
+      // Get unprocessed messages for this filter
+      const messages = await this.messagesService.getMessagesForFilter(
+        filter._id,
+        filter.batchSizeMessages,
+        false // not AI processed
+      );
+
+      if (messages.length === 0) {
+        console.log(`No unprocessed messages for filter: ${filter.name}`);
+        this.processingFilters.delete(filter.id);
+        return;
       }
+
+      console.log(`Found ${messages.length} messages to process for filter: ${filter.name}`);
+
+      // Normalize messages for AI
+      const normalizedMessages = messages.map(msg => this.messagesService.normalizeMessage(msg));
+
+      // Process with AI
+      const analysisResults = await this.aiService.analyzeMessages(normalizedMessages, filter.matchGoal);
+
+      console.log(`Received ${analysisResults.length} analysis results for filter: ${filter.name}`);
+
+      // Process AI results
+      for (let i = 0; i < analysisResults.length; i++) {
+        const result = analysisResults[i];
+        const message = messages[i];
+
+        // Check if it's a lead
+        if (result.isLead) {
+          console.log(`Lead found! Message ID: ${message.id}, Filter: ${filter.name}`);
+
+          // Create a lead
+          await this.leadService.createLeadFromAnalysis(result, filter._id, message);
+        }
+      }
+
+      // Mark messages as processed
+      await this.messagesService.markMessagesAsProcessed(messages.map(msg => msg.id));
+
+      // Reset batch counters
+      await this.messageFilterService.resetBatchCounters(filter._id.toString());
+
+      console.log(`Batch processing completed for filter: ${filter.name}`);
     } catch (error) {
-      console.error(`Error handling callback for topic ${callbackTopic}:`, error);
+      console.error(`Error processing batch for filter ${filter.name}:`, error);
+    } finally {
+      // Mark filter as no longer being processed
+      this.processingFilters.delete(filter.id);
     }
   }
 
   private setupChangeStream() {
     try {
-      const changeStream = this.accountModel.watch();
+      const accountChangeStream = this.accountModel.watch();
 
-      changeStream.on("change", async (change) => {
+      accountChangeStream.on("change", async (change) => {
         try {
           if (change.operationType === "update") {
             const accountId = change.documentKey._id;
@@ -231,20 +288,40 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
             }
           }
         } catch (error) {
-          console.error('Error in change stream handler:', error);
+          console.error('Error in account change stream handler:', error);
         }
       });
 
-      changeStream.on("error", (error) => {
-        console.error('Change stream error:', error);
-      });
+      // Also watch filters for changes to batch limits
+      const filterChangeStream = this.filterModel.watch();
 
+      filterChangeStream.on("change", async (change) => {
+        try {
+          if (change.operationType === "update" &&
+            (change.updateDescription.updatedFields?.batchSizeMessages !== undefined ||
+              change.updateDescription.updatedFields?.batchSizeCharacters !== undefined)) {
+
+            const filterId = change.documentKey._id;
+            const filter = await this.filterModel.findById(filterId);
+
+            if (filter) {
+              const batchLimitsReached = await this.messageFilterService.checkBatchLimits(filter);
+
+              if (batchLimitsReached && !this.processingFilters.has(filter.id)) {
+                this.processBatch(filter);
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error in filter change stream handler:', error);
+        }
+      });
     } catch (error) {
-      console.error('Error setting up change stream:', error);
+      console.error('Error setting up change streams:', error);
     }
   }
 
-  // Публичные методы для управления парсером
+  // Public methods for managing parsing
   async enableParsingForAccount(accountId: string) {
     try {
       const account = await this.accountModel.findOne({ id: accountId });
@@ -287,6 +364,7 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
       const status = {
         totalAccounts: activeAccounts.length,
         activeHandlers: this.handlers.size,
+        processingFilters: Array.from(this.processingFilters),
         accounts: activeAccounts.map(account => ({
           id: account.id,
           name: account.name,
@@ -299,6 +377,27 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
       return status;
     } catch (error) {
       console.error('Error getting parsing status:', error);
+      throw error;
+    }
+  }
+
+  // Method to manually trigger batch processing for a filter
+  async triggerBatchProcessing(filterId: string) {
+    try {
+      const filter = await this.filterModel.findOne({ id: filterId });
+
+      if (!filter) {
+        throw new Error(`Filter not found: ${filterId}`);
+      }
+
+      if (!this.processingFilters.has(filter.id)) {
+        await this.processBatch(filter);
+        return { success: true, message: `Batch processing triggered for filter: ${filter.name}` };
+      } else {
+        return { success: false, message: `Filter ${filter.name} is already being processed` };
+      }
+    } catch (error) {
+      console.error(`Error triggering batch processing for filter ${filterId}:`, error);
       throw error;
     }
   }

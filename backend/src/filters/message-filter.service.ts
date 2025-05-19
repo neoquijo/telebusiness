@@ -1,169 +1,147 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model, ObjectId, Types } from "mongoose";
-import { MessageFilter } from "./models/message-filter.schema";
-import { User } from "src/users/models/user.schema";
-import { ReqFilters } from "src/decorators/ReqFilters";
-import { filteredRequest } from "src/utils/filteredRequests";
-import { CreateMessageFilterDto, UpdateMessageFilterDto } from "./models/telegram-message.dto";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
+import { MessageFilter } from './models/message-filter.schema';
+import { ReqFilters } from 'src/decorators/ReqFilters';
+import { User } from 'src/users/models/user.schema';
+import { filteredRequest } from 'src/utils/filteredRequests';
+import { CreateMessageFilterDto, UpdateMessageFilterDto } from './models/telegram-message.dto';
 
 @Injectable()
 export class MessageFilterService {
   constructor(
-    @InjectModel(MessageFilter.name) private readonly filterModel: Model<MessageFilter>
+    @InjectModel(MessageFilter.name)
+    private readonly messageFilterModel: Model<MessageFilter>
   ) { }
 
   async getUserFilters(filters: ReqFilters, user: User) {
-    try {
-      const query = { user: user._id };
+    return await filteredRequest(
+      this.messageFilterModel,
+      filters,
+      { user: user._id }
+    );
+  }
 
-      // Добавим поиск по названию фильтра
-      if (filters.searchQuery) {
-        query['name'] = { "$regex": filters.searchQuery, "$options": "i" };
-      }
-
-      return await filteredRequest(
-        this.filterModel,
-        filters,
-        query
-      );
-    } catch (error) {
-      throw new BadRequestException('Failed to get filters');
-    }
+  async getUserFiltersForAccount(userId: string) {
+    return await this.messageFilterModel.find({ user: new Types.ObjectId(userId) }).exec();
   }
 
   async getFilterById(id: string, user: User) {
-    try {
-      const filter = await this.filterModel.findOne({ id, user: user._id });
-
-      if (!filter) {
-        throw new NotFoundException('Filter not found');
-      }
-
-      return filter;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new BadRequestException('Failed to get filter');
-    }
+    return await this.messageFilterModel.findOne({
+      id,
+      user: user._id
+    }).exec();
   }
 
   async createFilter(createDto: CreateMessageFilterDto, user: User) {
-    try {
-      // Валидируем regexp если он указан
-      if (createDto.regexp) {
-        try {
-          new RegExp(createDto.regexp);
-        } catch (regexError) {
-          throw new BadRequestException('Invalid regular expression');
-        }
-      }
-
-      const filter = await this.filterModel.create({
-        ...createDto,
-        user: user._id
-      });
-
-      return filter;
-    } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new BadRequestException('Failed to create filter');
-    }
+    const filter = new this.messageFilterModel({
+      ...createDto,
+      user: user._id,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    return await filter.save();
   }
 
   async updateFilter(id: string, updateDto: UpdateMessageFilterDto, user: User) {
-    try {
-      // Проверяем что фильтр принадлежит пользователю
-      const existingFilter = await this.filterModel.findOne({ id, user: user._id });
-
-      if (!existingFilter) {
-        throw new NotFoundException('Filter not found');
-      }
-
-      // Валидируем regexp если он указан
-      if (updateDto.regexp) {
-        try {
-          new RegExp(updateDto.regexp);
-        } catch (regexError) {
-          throw new BadRequestException('Invalid regular expression');
-        }
-      }
-
-      const updatedFilter = await this.filterModel.findOneAndUpdate(
-        { id, user: user._id },
-        updateDto,
-        { new: true }
-      );
-
-      return updatedFilter;
-    } catch (error) {
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
-        throw error;
-      }
-      throw new BadRequestException('Failed to update filter');
-    }
+    return await this.messageFilterModel.findOneAndUpdate(
+      { id, user: user._id },
+      { ...updateDto, updatedAt: new Date() },
+      { new: true }
+    ).exec();
   }
 
   async deleteFilter(id: string, user: User) {
-    try {
-      const deletedFilter = await this.filterModel.findOneAndDelete({
-        id,
-        user: user._id
-      });
-
-      if (!deletedFilter) {
-        throw new NotFoundException('Filter not found');
-      }
-
-      return { message: 'Filter deleted successfully' };
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new BadRequestException('Failed to delete filter');
-    }
+    return await this.messageFilterModel.findOneAndDelete({
+      id,
+      user: user._id
+    }).exec();
   }
 
   async testFilter(id: string, messageText: string, user: User) {
-    try {
-      const filter = await this.getFilterById(id, user);
-      const matches = this.checkFilterMatches(messageText, filter);
+    const filter = await this.messageFilterModel.findOne({
+      id,
+      user: user._id
+    }).exec();
 
-      return {
-        filterId: filter.id,
-        filterName: filter.name,
-        messageText,
-        matches
-      };
-    } catch (error) {
-      throw error;
+    if (!filter) {
+      return { matches: false, error: 'Filter not found' };
     }
+
+    const matches = this.checkFilterMatches(messageText, filter, []);
+    return { matches, filter };
   }
 
-  // Метод для проверки соответствия сообщения фильтру (используется в парсере)
-  checkFilterMatches(messageText: string, filter: MessageFilter): boolean {
-    // Проверяем включающий текст
+  async incrementBatchCounters(filter: MessageFilter, messageText: string) {
+    const charLength = messageText.length;
+
+    const updatedFilter = await this.messageFilterModel.findOneAndUpdate(
+      { _id: filter._id },
+      {
+        $inc: {
+          currentCharactersLength: charLength,
+          currentMessagesLength: 1
+        }
+      },
+      { new: true }
+    );
+
+    return updatedFilter;
+  }
+
+  async resetBatchCounters(filterId: string) {
+    return await this.messageFilterModel.updateOne(
+      { _id: filterId },
+      { currentCharactersLength: 0, currentMessagesLength: 0 }
+    );
+  }
+
+  async checkBatchLimits(filter: MessageFilter): Promise<boolean> {
+    return (
+      filter.currentCharactersLength >= filter.batchSizeCharacters ||
+      filter.currentMessagesLength >= filter.batchSizeMessages
+    );
+  }
+
+  checkFilterMatches(messageText: string, filter: MessageFilter, media: any[] = []): boolean {
+    // Check includes text condition
     if (filter.includesText && filter.includesText.length > 0) {
-      for (const text of filter.includesText) {
-        if (!messageText.toLowerCase().includes(text.toLowerCase())) {
-          return false;
-        }
-      }
+      const hasIncluded = filter.includesText.some(text =>
+        messageText.toLowerCase().includes(text.toLowerCase())
+      );
+      if (!hasIncluded) return false;
     }
 
-    // Проверяем исключающий текст
+    // Check excludes text condition
     if (filter.excludesText && filter.excludesText.length > 0) {
-      for (const text of filter.excludesText) {
-        if (messageText.toLowerCase().includes(text.toLowerCase())) {
-          return false;
-        }
-      }
+      const hasExcluded = filter.excludesText.some(text =>
+        messageText.toLowerCase().includes(text.toLowerCase())
+      );
+      if (hasExcluded) return false;
     }
 
-    // Проверяем регулярное выражение
+    // Check includes all condition (all words must be present)
+    if (filter.includesAll && filter.includesAll.length > 0) {
+      const allIncluded = filter.includesAll.every(text =>
+        messageText.toLowerCase().includes(text.toLowerCase())
+      );
+      if (!allIncluded) return false;
+    }
+
+    // Check media conditions
+    const hasMedia = media && media.length > 0;
+
+    // Check includes media condition
+    if (filter.includesMedia && !hasMedia) {
+      return false;
+    }
+
+    // Check excludes media condition
+    if (filter.excludesMedia && hasMedia) {
+      return false;
+    }
+
+    // Check regexp condition
     if (filter.regexp) {
       try {
         const regex = new RegExp(filter.regexp, 'i');
@@ -177,15 +155,5 @@ export class MessageFilterService {
     }
 
     return true;
-  }
-
-  // Метод для получения всех фильтров пользователя (используется в парсере)
-  async getUserFiltersForAccount(userId: Types.ObjectId) {
-    try {
-      return await this.filterModel.find({ user: userId });
-    } catch (error) {
-      console.error('Error getting user filters:', error);
-      return [];
-    }
   }
 }

@@ -13,9 +13,8 @@ import { TasksModule } from './tasks/tasks.module';
 import { FiltersModule } from './filters/filters.module';
 import { TaskRunnerModule } from './task-runner/task-runner.module';
 import { ParserModule } from './parser/parser.module';
-import { DeepseekModule } from './deepseek/deepseek.module';
 import { LeadsModule } from './leads/leads.module';
-
+import { AIModule } from './artificial-intelligence/artificial-intelligence.module';
 
 @Module({
   imports: [
@@ -31,8 +30,8 @@ import { LeadsModule } from './leads/leads.module';
     FiltersModule,
     TaskRunnerModule,
     ParserModule,
-    DeepseekModule,
     LeadsModule,
+    AIModule,
     // TaskManagerModule
   ],
   controllers: [AppController],

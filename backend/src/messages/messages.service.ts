@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { TelegramMessage } from "./models/message.model";
 import { User } from "src/users/models/user.schema";
 import { ReqFilters } from "src/decorators/ReqFilters";
 import { filteredRequest } from "src/utils/filteredRequests";
+import { NormalizedMessage } from "src/filters/models/telegram-message.dto";
 
 @Injectable()
 export class MessagesService {
@@ -176,5 +177,40 @@ export class MessagesService {
       console.error('Error updating message:', error);
       throw error;
     }
+  }
+
+  async getMessagesForFilter(filterId: Types.ObjectId, limit = 100, aiProcessed = false) {
+    return await this.messageModel.find({
+      filtered: filterId,
+      aiProcessed
+    })
+      .sort({ createdAt: 1 })
+      .limit(limit)
+      .exec();
+  }
+
+  async markMessagesAsProcessed(messageIds: string[]) {
+    return await this.messageModel.updateMany(
+      { id: { $in: messageIds } },
+      { aiProcessed: true }
+    );
+  }
+
+  normalizeMessage(message: TelegramMessage): NormalizedMessage {
+    return {
+      id: message.id,
+      text: String(message.messageText),
+      sender: Number(message.sender),
+      senderUsername: '',  // Would need to be populated from Telegram
+      chatId: Number(message.accountId),
+      chatTitle: '',  // Would need to be populated from Telegram
+      chatType: message.sourceType,
+      media: message.messageMedia || [],
+      sentAt: new Date(message.createdAt)
+    };
+  }
+
+  async handleMessage(event: any) {
+    console.log(event);
   }
 }
