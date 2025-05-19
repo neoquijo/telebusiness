@@ -1,43 +1,56 @@
-// src/modules/MessagesModule/components/MessageItem.tsx
-import { FC } from 'react';
-import css from './MessageItem.module.css';
+// frontend/src/modules/MessagesModule/Components/MessageItem.tsx
+import React from 'react';
+import { MdMessage } from 'react-icons/md';
+import { FaUser, FaBroadcastTower, FaFilter, FaClock } from 'react-icons/fa';
 import { TelegramMessage } from '../../../API/messagesApi';
-import { FaUser, FaUsers, FaBroadcastTower, FaFilter } from 'react-icons/fa';
+import css from './MessageItem.module.css';
 
-interface IProps {
+interface MessageItemProps {
   message: TelegramMessage;
+  index: number;
+  searchQuery?: string;
+  onClick: () => void;
 }
 
-const MessageItem: FC<IProps> = ({ message }) => {
-  const getSourceIcon = () => {
+const highlightText = (text: string, query: string) => {
+  if (!query.trim()) return text;
+  const regex = new RegExp(`(${query})`, 'gi');
+  return text.split(regex).map((part, index) =>
+    regex.test(part) ? (
+      <span key={index} className={css.highlight}>
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  );
+};
+
+const MessageItem: React.FC<MessageItemProps> = ({
+  message,
+  index,
+  searchQuery = '',
+  onClick
+}) => {
+  const getSourceInfo = () => {
     switch (message.sourceType) {
       case 'Private':
-        return <FaUser />;
-      case 'Group':
-        return <FaUsers />;
+        return { icon: FaUser, label: 'Личный чат', color: '#2196f3' };
       case 'Channel':
-        return <FaBroadcastTower />;
+        return { icon: FaBroadcastTower, label: 'Канал', color: '#ff9800' };
+      case 'Chat':
+      case 'Group':
+        return { icon: MdMessage, label: 'Группа', color: '#4caf50' };
       default:
-        return <FaUser />;
+        return { icon: MdMessage, label: message.sourceType, color: '#607d8b' };
     }
   };
 
-  const getSourceTypeLabel = () => {
-    switch (message.sourceType) {
-      case 'Private':
-        return 'Личная переписка';
-      case 'Group':
-        return 'Группа';
-      case 'Channel':
-        return 'Канал';
-      default:
-        return message.sourceType;
-    }
-  };
+  const sourceInfo = getSourceInfo();
+  const SourceIcon = sourceInfo.icon;
 
   const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString('ru-RU', {
+    return new Date(timestamp).toLocaleDateString('ru-RU', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -46,68 +59,70 @@ const MessageItem: FC<IProps> = ({ message }) => {
     });
   };
 
+  const truncateText = (text: string, maxLength: number = 150) => {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  };
+
   return (
-    <div className={css.wrapper}>
-      <div className={css.header}>
-        <div className={css.source}>
-          <div className={css.sourceIcon}>
-            {getSourceIcon()}
-          </div>
-          <div className={css.sourceInfo}>
-            <div className={css.sourceType}>{getSourceTypeLabel()}</div>
-            <div className={css.accountInfo}>
-              Аккаунт: {message.accountString}
-              {message.sender && <span> • ID отправителя: {message.sender}</span>}
+    <div
+      className={`${css.item} ${index % 2 === 0 ? css.even : css.odd}`}
+      onClick={onClick}
+    >
+      <div className={css.main}>
+        <div className={css.content}>
+          <div className={css.header}>
+            <div className={css.sourceInfo}>
+              <div
+                className={css.sourceBadge}
+                style={{ backgroundColor: sourceInfo.color }}
+              >
+                <SourceIcon className={css.sourceIcon} />
+                <span>{sourceInfo.label}</span>
+              </div>
+              <span className={css.accountInfo}>
+                Account: {message.accountString}
+              </span>
+            </div>
+            <div className={css.meta}>
+              <FaClock className={css.clockIcon} />
+              <span className={css.date}>
+                {formatDate(message.createdAt)}
+              </span>
             </div>
           </div>
-        </div>
-        <div className={css.date}>
-          {formatDate(message.createdAt)}
+
+          <div className={css.messageContent}>
+            <p className={css.messageText}>
+              {searchQuery
+                ? highlightText(truncateText(message.messageText), searchQuery)
+                : truncateText(message.messageText)
+              }
+            </p>
+          </div>
+
+          <div className={css.footer}>
+            {message.filtered && message.filtered.length > 0 && (
+              <div className={css.filterInfo}>
+                <FaFilter className={css.filterIcon} />
+                <span className={css.filterText}>
+                  Отфильтровано: {message.filterNames.join(', ')}
+                </span>
+              </div>
+            )}
+
+            {message.generatedTags && message.generatedTags.length > 0 && (
+              <div className={css.tags}>
+                {message.generatedTags.map((tag, idx) => (
+                  <span key={idx} className={css.tag}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      <div className={css.content}>
-        <div className={css.messageText}>
-          {message.messageText || <span className={css.noText}>Сообщение без текста</span>}
-        </div>
-
-        {message.messageMedia && message.messageMedia.length > 0 && (
-          <div className={css.media}>
-            <div className={css.mediaLabel}>
-              📎 Содержит медиа ({message.messageMedia.length})
-            </div>
-          </div>
-        )}
-      </div>
-
-      {message.filtered && message.filtered.length > 0 && (
-        <div className={css.filters}>
-          <div className={css.filtersHeader}>
-            <FaFilter className={css.filterIcon} />
-            <span>Соответствует фильтрам:</span>
-          </div>
-          <div className={css.filterTags}>
-            {message.filterNames.map((filterName, index) => (
-              <span key={index} className={css.filterTag}>
-                {filterName}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {message.generatedTags && message.generatedTags.length > 0 && (
-        <div className={css.tags}>
-          <div className={css.tagsLabel}>Теги:</div>
-          <div className={css.tagsList}>
-            {message.generatedTags.map((tag, index) => (
-              <span key={index} className={css.tag}>
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -19,7 +19,9 @@ export class AccountController {
     private readonly client: TelegramClient
   ) {
     this.client = new TelegramClient(new StringSession(''), 19177732, "b100d80721045777438318e47409ecae", {})
-    this.client.connect().then(() => console.log('client connected'))
+    this.client.connect().then(() => console.log('client connected')).catch(e => {
+      console.log('ERRRRRRRRRRRRRRROOORRRR!!! accounts.controller.ts')
+    })
     this.ApiConfig =
     {
       apiHash: "b100d80721045777438318e47409ecae",

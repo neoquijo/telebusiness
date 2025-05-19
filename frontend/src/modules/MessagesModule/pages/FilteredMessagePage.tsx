@@ -1,129 +1,162 @@
-import { FC, useState } from 'react';
-import css from '../pages/MessagesPage.module.css';
-import SearchInput from '../../../shared/components/UI/SearchInput/SearchInput';
-import Button from '../../../shared/components/UI/Button/Button';
-import { FaFilter, FaArrowLeft } from 'react-icons/fa';
-import { useGetFilteredMessagesQuery } from '../../../API/messagesApi';
+import React, { useState } from 'react';
+import { useGetFilteredMessagesQuery, useGetMessageStatisticsQuery } from '../../../API/messagesApi';
 import { useGetFiltersQuery } from '../../../API/filtersApi';
+import Button from '../../../shared/components/UI/Button/Button';
+import SearchInput from '../../../shared/components/UI/SearchInput/SearchInput';
+import { MdFilterList } from 'react-icons/md';
+import { FaFilter } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import usePagination from '../../../shared/components/Navigation/Pagination/usePagination';
-import NoData from '../../../shared/components/NoData/NoData';
-import { MdRefresh } from 'react-icons/md';
+import css from './FilteredMessagesPage.module.css';
+import StatisticsCard from './StatisticsCard';
 import MessageItem from '../components/MessagesItem';
 
-interface IProps { }
-
-const FilteredMessagesPage: FC<IProps> = () => {
+const FilteredMessagesPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<string>('');
-  const [selectedSourceType, setSelectedSourceType] = useState<string>('');
-  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
+  const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const { Pagination, page, limit } = usePagination(1, 20);
 
-  const { Pagination, page: currentPage, limit } = usePagination(1, 20);
-
+  // Формирование queryParams в нужном формате
   const queryParams = new URLSearchParams({
     searchQuery,
-    page: String(currentPage),
-    limit: String(limit),
+    page: page.toString(),
+    limit: limit.toString(),
     orderBy: 'createdAt',
     order,
-    ...(selectedSourceType && { sourceType: selectedSourceType }),
-  });
+    type: selectedFilterId ?? ''
+  }).toString();
 
-  const { data: messages, isFetching, refetch } = useGetFilteredMessagesQuery(queryParams.toString());
-  const { data: filters } = useGetFiltersQuery('limit=100');
+  const { data: messages, isLoading: messagesLoading, refetch } = useGetFilteredMessagesQuery(queryParams);
+  const { data: statistics } = useGetMessageStatisticsQuery('');
+  const { data: filtersData } = useGetFiltersQuery('');
 
-  const sourceTypes = [
-    { value: '', label: 'Все типы' },
-    { value: 'Private', label: 'Личные' },
-    { value: 'Group', label: 'Группы' },
-    { value: 'Channel', label: 'Каналы' },
-  ];
+  if (messagesLoading) {
+    return (
+      <div className={css.loading}>
+        <div className={css.loadingContent}>
+          <div className={css.spinner}></div>
+          <p>Загрузка отфильтрованных сообщений...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className={css.wrapper}>
+    <div className={css.container}>
       <div className={css.header}>
-        <div className={css.title}>
-          <FaFilter className={css.titleIcon} />
-          Отфильтрованные сообщения
+        <div className={css.headerContent}>
+          <h1 className={css.title}>
+            <MdFilterList className={css.titleIcon} />
+            Отфильтрованные сообщения
+          </h1>
+          <div className={css.headerActions}>
+            <Button
+              variant="secondary"
+              onClick={() => navigate('/messages')}
+            >
+              Все сообщения
+            </Button>
+            <Button
+              variant="primary"
+              icon={FaFilter}
+              onClick={() => navigate('/filters')}
+            >
+              Управление фильтрами
+            </Button>
+          </div>
         </div>
-        <div className={css.headerActions}>
-          <Button
-            icon={FaArrowLeft}
-            variant="ghost"
-            onClick={() => navigate('/messages')}
-          >
-            Все сообщения
-          </Button>
-        </div>
-      </div>
 
-      <div className={css.filterSection}>
-        <div className={css.searchRow}>
-          <SearchInput
-            className={css.searchInput}
-            caption="Поиск по отфильтрованным сообщениям"
-            cb={(value) => setSearchQuery(value)}
-          />
-
-          <select
-            className={css.typeSelect}
-            value={selectedFilter}
-            onChange={(e) => setSelectedFilter(e.target.value)}
-          >
-            <option value="">Все фильтры</option>
-            {filters?.items?.map(filter => (
-              <option key={filter.id} value={filter.id}>
-                {filter.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className={css.typeSelect}
-            value={selectedSourceType}
-            onChange={(e) => setSelectedSourceType(e.target.value)}
-          >
-            {sourceTypes.map(type => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-
-          <Button
-            icon={MdRefresh}
-            onClick={() => refetch()}
-            title="Обновить"
-          />
-          <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
-            {order === 'asc' ? '↑' : '↓'}
-          </Button>
-        </div>
-      </div>
-
-      <div className={css.messagesContainer}>
-        {isFetching && <div className={css.loading}>Загрузка отфильтрованных сообщений...</div>}
-
-        {!isFetching && (
-          <div className={css.messagesList}>
-            {messages?.items?.map((message) => (
-              <MessageItem key={message.id} message={message} />
-            ))}
-
-            {messages?.items?.length === 0 && (
-              <NoData
-                text="Отфильтрованные сообщения не найдены"
-                subText="Попробуйте создать фильтры или изменить параметры поиска"
+        {/* {statistics && (
+          <div className={css.statistics}>
+            <StatisticsCard
+              title="Отфильтрованных сообщений"
+              value={statistics.filteredMessages}
+              icon={MdFilterList}
+              color="#4caf50"
+              subtitle={`${statistics.filteredPercentage}% от общего числа`}
+            />
+            {statistics.topFilters && statistics.topFilters.length > 0 && (
+              <StatisticsCard
+                title="Самый активный фильтр"
+                value={statistics.topFilters[0].filterName}
+                subtitle={`${statistics.topFilters[0].count} сообщений`}
+                icon={FaFilter}
+                color="#ff9800"
               />
             )}
           </div>
-        )}
+        )} */}
+
+        <div className={css.controls}>
+          <div className={css.searchSection}>
+            <SearchInput
+              style={{ minWidth: '300px' }}
+              caption="Поиск по сообщениям"
+              cb={setSearchQuery}
+            />
+          </div>
+
+          <div className={css.filterSection}>
+            <label className={css.filterLabel}>Фильтр:</label>
+            <select
+              value={selectedFilterId || ''}
+              onChange={(e) => setSelectedFilterId(e.target.value || null)}
+              className={css.filterSelect}
+            >
+              <option value="">Все фильтры</option>
+              {filtersData?.items.map(filter => (
+                <option key={filter.id} value={filter.id}>
+                  {filter.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
+            {order === 'asc' ? '↑' : '↓'}
+          </Button>
+          <Button
+            className={css.refreshButton}
+            onClick={() => refetch()}
+            title="Обновить список"
+          >
+            Обновить
+          </Button>
+        </div>
       </div>
 
-      <div className={css.pagination}>
-        <Pagination totalItems={messages?.totalItems || 0} />
+      <div className={css.content}>
+        <div className={css.messageList}>
+          {messages?.items && messages.items.length > 0 ? (
+            messages.items.map((message, index) => (
+              <MessageItem
+                key={message.id}
+                message={message}
+                index={index}
+                searchQuery={searchQuery}
+                onClick={() => navigate(`/messages/detail/${message.id}`)}
+              />
+            ))
+          ) : (
+            <div className={css.emptyState}>
+              <MdFilterList className={css.emptyIcon} />
+              <h3>Отфильтрованные сообщения не найдены</h3>
+              <p>
+                {selectedFilterId || searchQuery
+                  ? 'Попробуйте изменить фильтры или поисковый запрос'
+                  : 'Пока нет сообщений, соответствующих заданным фильтрам'}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {messages && messages.totalPages > 1 && (
+          <div className={css.paginationWrapper}>
+            <Pagination totalItems={messages.totalItems} />
+          </div>
+        )}
       </div>
     </div>
   );

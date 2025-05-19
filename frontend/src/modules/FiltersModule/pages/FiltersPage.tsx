@@ -1,85 +1,132 @@
-// src/modules/FiltersModule/pages/FiltersPage.tsx
-import { FC, useState } from 'react';
-import css from './FiltersPage.module.css';
-import SearchInput from '../../../shared/components/UI/SearchInput/SearchInput';
+import React, { useState } from 'react';
+import { useGetFiltersQuery, useDeleteFilterMutation } from '../../../API/filtersApi';
 import Button from '../../../shared/components/UI/Button/Button';
-import { FaPlus, FaFilter } from 'react-icons/fa';
-import { useGetFiltersQuery } from '../../../API/filtersApi';
+import SearchInput from '../../../shared/components/UI/SearchInput/SearchInput';
+import { BsFilter, BsPlus } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
-import FilterItem from '../components/FilterItem';
+import { infoSuccess, infoError } from '../../../shared/lib/toastWrapper';
 import usePagination from '../../../shared/components/Navigation/Pagination/usePagination';
-import NoData from '../../../shared/components/NoData/NoData';
+import css from './FiltersPage.module.css';
+import FilterItem from '../components/FilterItem';
 
-interface IProps { }
-
-const FiltersPage: FC<IProps> = () => {
+const FiltersPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatus] = useState<string>('');
-  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
-
-  const { Pagination, page: currentPage, limit } = usePagination(1, 10);
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const { Pagination, page, limit } = usePagination(1, 20);
+  const [deleteFilter] = useDeleteFilterMutation();
 
   const queryParams = new URLSearchParams({
     searchQuery,
-    page: String(currentPage),
-    limit: String(limit),
+    page: page.toString(),
+    limit: limit.toString(),
     orderBy: 'createdAt',
     order,
-    ...(selectedStatus && { status: selectedStatus }),
-  });
+  }).toString();
 
-  const { data: filters, isFetching, refetch } = useGetFiltersQuery(queryParams.toString());
+  const { data, isFetching, refetch } = useGetFiltersQuery(queryParams);
+
+  const handleDeleteFilter = async (id: string) => {
+    if (window.confirm('Вы уверены, что хотите удалить этот фильтр?')) {
+      try {
+        await deleteFilter(id).unwrap();
+        infoSuccess('Фильтр успешно удален');
+        refetch();
+      } catch (error) {
+        infoError('Ошибка при удалении фильтра');
+      }
+    }
+  };
 
   return (
-    <div className={css.wrapper}>
+    <div className={css.container}>
       <div className={css.header}>
-        <div className={css.title}>
-          <FaFilter className={css.titleIcon} />
-          Фильтры сообщений
+        <div className={css.headerContent}>
+          <h1 className={css.title}>
+            <BsFilter className={css.titleIcon} />
+            Фильтры сообщений
+          </h1>
+          <div className={css.stats}>
+            <div className={css.statItem}>
+              <span className={css.statValue}>{data?.totalItems || 0}</span>
+              <span className={css.statLabel}>Всего фильтров</span>
+            </div>
+          </div>
         </div>
-        <Button
-          icon={FaPlus}
-          onClick={() => navigate('/filters/create')}
-        >
-          Создать фильтр
-        </Button>
-      </div>
 
-      <div className={css.filterSection}>
-        <div className={css.searchRow}>
-          <SearchInput
-            className={css.searchInput}
-            caption="Поиск фильтров"
-            cb={(value) => setSearchQuery(value)}
-          />
-          <Button onClick={() => refetch()}>
-            Обновить
+        <div className={css.controls}>
+          <div className={css.searchSection}>
+            <SearchInput
+              style={{ minWidth: '300px' }}
+              caption="Поиск по фильтрам"
+              cb={setSearchQuery}
+            />
+          </div>
+
+          <Button
+            variant="primary"
+            icon={BsPlus}
+            onClick={() => navigate('/filters/create')}
+          >
+            Создать фильтр
           </Button>
+
           <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
             {order === 'asc' ? '↑' : '↓'}
           </Button>
+
+          <Button
+            className={css.refreshButton}
+            onClick={() => refetch()}
+            title="Обновить список"
+          >
+            Обновить
+          </Button>
         </div>
       </div>
 
-      <div className={css.filtersContainer}>
-        {isFetching && <div className={css.loading}>Загрузка фильтров...</div>}
+      <div className={css.content}>
+        <div className={css.filterList}>
+          {isFetching ? (
+            <div className={css.loading}>Загрузка фильтров...</div>
+          ) : data?.items?.length! > 0 ? (
+            data?.items.map((filter, index) => (
+              <FilterItem
+                key={filter.id}
+                filter={filter}
+                index={index}
+                searchQuery={searchQuery}
+                onEdit={(id) => navigate(`/filters/edit/${id}`)}
+                onDelete={handleDeleteFilter}
+              />
+            ))
+          ) : (
+            <div className={css.emptyState}>
+              <BsFilter className={css.emptyIcon} />
+              <h3>Фильтры не найдены</h3>
+              <p>
+                {searchQuery
+                  ? 'Попробуйте изменить поисковый запрос'
+                  : 'Создайте свой первый фильтр для отслеживания сообщений'}
+              </p>
+              {!searchQuery && (
+                <Button
+                  variant="primary"
+                  icon={BsPlus}
+                  onClick={() => navigate('/filters/create')}
+                >
+                  Создать первый фильтр
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
 
-        {!isFetching && (
-          <div className={css.filtersList}>
-            {filters?.items?.map((filter) => (
-              <FilterItem key={filter.id} filter={filter} />
-            ))}
-
-            {filters?.items?.length === 0 && (
-              <NoData text="Фильтры не найдены" subText="Создайте первый фильтр для начала работы" />
-            )}
+        {data && data.totalPages > 1 && (
+          <div className={css.paginationWrapper}>
+            <Pagination totalItems={data.totalItems} />
           </div>
         )}
-      </div>
-
-      <div className={css.pagination}>
-        <Pagination totalItems={filters?.totalItems || 0} />
       </div>
     </div>
   );

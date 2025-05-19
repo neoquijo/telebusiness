@@ -6,8 +6,8 @@ import FiltersPage from "./pages/FiltersPage";
 // import CreateFilterPage from "./pages/CreateFilterPage";
 // import FilterDetailPage from "./pages/FilterDetailPage";
 import BackToFilters from "./components/widgets/BackToFilters";
-import CreateFilterPage from "./pages/CreateFilterPage";
 import FilterDetailPage from "./pages/FilterDetailPage";
+import CreateFilterPage from "./pages/CreateFilterPage";
 
 const routes: RouteConfig[] = [
   {

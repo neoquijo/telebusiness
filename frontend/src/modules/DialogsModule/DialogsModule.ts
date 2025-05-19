@@ -1,13 +1,14 @@
 import { BaseModule, RouteConfig } from "../../core/Module";
 import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 import { IoMdChatboxes } from "react-icons/io";
-import ChatPage from "./Pages/ChatPage";
+// import ChatPage from "./Pages/ChatPage";
+import DialogsPage from "./Pages/DialogsPage";
 
 
 const routes: RouteConfig[] = [
   {
     path: "/chats",
-    component: ChatPage,
+    component: DialogsPage,
     props: {},
     title: 'Чаты',
     layout: DashboardLayout,

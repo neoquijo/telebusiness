@@ -13,6 +13,8 @@ import { TasksModule } from './tasks/tasks.module';
 import { FiltersModule } from './filters/filters.module';
 import { TaskRunnerModule } from './task-runner/task-runner.module';
 import { ParserModule } from './parser/parser.module';
+import { DeepseekModule } from './deepseek/deepseek.module';
+import { LeadsModule } from './leads/leads.module';
 
 
 @Module({
@@ -29,6 +31,8 @@ import { ParserModule } from './parser/parser.module';
     FiltersModule,
     TaskRunnerModule,
     ParserModule,
+    DeepseekModule,
+    LeadsModule,
     // TaskManagerModule
   ],
   controllers: [AppController],

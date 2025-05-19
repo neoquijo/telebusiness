@@ -1,4 +1,4 @@
-import { Model, Document, Types, FilterQuery, RootFilterQuery } from 'mongoose';
+import { Model, Document, Types, FilterQuery, RootFilterQuery, PopulateOptions } from 'mongoose';
 
 interface FilterOptions {
   limit?: number;
@@ -9,11 +9,10 @@ interface FilterOptions {
   status?: string;
   order?: 'asc' | 'desc';
   orderBy?: string;
+  searchQuery?: string;
+  startDate?: string;
+  endDate?: string;
 }
-
-// interface AdditionalQuery {
-//   [key: string]: unknown;
-// }
 
 export interface FilteredResponse<T> {
   currentPage: number;
@@ -27,7 +26,7 @@ export const filteredRequest = async <T extends Document>(
   model: Model<T>,
   filterOptions: FilterOptions = {},
   additionalQuery: RootFilterQuery<FilterQuery<T>> = {},
-  populateFields?: string[],
+  populateFields?: (string | PopulateOptions)[],
   ignoreFields?: string[]
 ): Promise<FilteredResponse<T>> => {
   try {
@@ -40,6 +39,9 @@ export const filteredRequest = async <T extends Document>(
       status,
       order: sortOrder = 'desc',
       orderBy = 'createdAt',
+      searchQuery,
+      startDate,
+      endDate
     } = filterOptions;
 
     const safeLimit = Math.max(limit, 1);
@@ -53,6 +55,7 @@ export const filteredRequest = async <T extends Document>(
       status?: string;
     } = {};
 
+    // Обработка временных фильтров
     if (startTime !== undefined && !isNaN(startTime)) {
       query[periodOption] = { ...(query[periodOption] || {}), $gte: startTime };
     }
@@ -61,10 +64,26 @@ export const filteredRequest = async <T extends Document>(
       query[periodOption] = { ...(query[periodOption] || {}), $lte: endTime };
     }
 
+    // Дополнительная обработка дат в формате строки
+    if (startDate) {
+      const startTimestamp = new Date(startDate).getTime();
+      if (!isNaN(startTimestamp)) {
+        query[periodOption] = { ...(query[periodOption] || {}), $gte: startTimestamp };
+      }
+    }
+
+    if (endDate) {
+      const endTimestamp = new Date(endDate).getTime();
+      if (!isNaN(endTimestamp)) {
+        query[periodOption] = { ...(query[periodOption] || {}), $lte: endTimestamp };
+      }
+    }
+
     if (status !== undefined && status !== 'undefined') {
       query.status = status;
     }
 
+    // Создание проекции для игнорируемых полей
     const projection: { [key: string]: 0 } = {};
     if (ignoreFields && ignoreFields.length > 0) {
       for (const field of ignoreFields) {
@@ -72,6 +91,7 @@ export const filteredRequest = async <T extends Document>(
       }
     }
 
+    // Создание запроса
     let requestQuery = model
       .find({ ...query, ...additionalQuery }, projection)
       .sort({
@@ -81,9 +101,16 @@ export const filteredRequest = async <T extends Document>(
       .limit(safeLimit)
       .skip(skip);
 
-    if (populateFields) {
+    // Обработка популейшена - поддержка как строк, так и объектов PopulateOptions
+    if (populateFields && populateFields.length > 0) {
       for (const field of populateFields) {
-        requestQuery = requestQuery.populate(field);
+        if (typeof field === 'string') {
+          // Простое популирование по строке
+          requestQuery = requestQuery.populate(field);
+        } else {
+          // Популирование с дополнительными опциями
+          requestQuery = requestQuery.populate(field as PopulateOptions);
+        }
       }
     }
 

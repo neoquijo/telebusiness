@@ -8,13 +8,13 @@ export class TelegramMessage extends BaseDocument {
   sender: Number;
 
   @Prop()
-  sourceType: 'Chat' | 'Channel' | 'Private'
+  sourceType: 'Chat' | 'Channel' | 'Private' | 'Group';
 
   @Prop()
   accountId: Number;
 
-  @Prop()
-  generatedTags: Array<string>
+  @Prop({ type: [String], default: [] })
+  generatedTags: string[];
 
   @Prop()
   lang: string;
@@ -25,8 +25,8 @@ export class TelegramMessage extends BaseDocument {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   user: Types.ObjectId;
 
-  @Prop()
-  messageMedia: [];
+  @Prop({ type: [Object], default: [] })
+  messageMedia: any[];
 
   @Prop()
   messageText: String;

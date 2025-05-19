@@ -1,4 +1,4 @@
-/* frontend/src/modules/AccountsModule/Components/Accounts.module.css */
+/* frontend/src/modules/DialogsModule/Pages/DialogsPage.module.css */
 .container {
   padding: 1.5rem;
   height: 90vh;
@@ -26,13 +26,14 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.75rem !important;
+  font-size: 1.5em !important;
   font-weight: 600;
   color: var(--text-color);
   margin: 0;
 }
 
 .titleIcon {
+  color: var(--accent-color, #007bff);
   font-size: 2rem;
 }
 
@@ -74,7 +75,7 @@
 .filterSection {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
 }
 
 .filterIcon {
@@ -95,72 +96,12 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.listHeader {
-  display: flex;
-  align-items: center;
-  padding: 0 1rem;
-  border-bottom: 1px solid var(--border-color);
-  background-color: var(--bg-secondary);
-  height: 3rem;
-  font-weight: 600;
-  color: var(--text-color);
-}
-
-.listHeaderItem {
-  padding: 0 0.5rem;
-}
-
-.listHeaderItem:nth-child(1) {
-  width: 60px;
-  flex-shrink: 0;
-}
-
-.listHeaderItem:nth-child(2) {
-  flex: 2;
-  min-width: 150px;
-}
-
-.listHeaderItem:nth-child(3) {
-  flex: 1;
-  min-width: 120px;
-}
-
-.listHeaderItem:nth-child(4) {
-  flex: 1;
-  min-width: 100px;
-}
-
-.listHeaderItem:nth-child(5) {
-  flex: 1;
-  min-width: 120px;
-}
-
-.listHeaderItem:nth-child(6) {
-  flex: 1;
-  min-width: 120px;
-  text-align: right;
-}
-
-.sortable {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  user-select: none;
-  transition: color 0.2s ease;
-}
-
-.sortable:hover {
-  color: var(--accent-color);
-}
-
-.accountsList {
+.chatList {
   flex: 1;
   overflow-y: auto;
-  padding: 0.75rem;
+  padding: 1rem;
 }
 
 .emptyState {
@@ -171,14 +112,12 @@
   height: 100%;
   text-align: center;
   color: var(--text-secondary);
-  padding: 3rem 1rem;
 }
 
 .emptyIcon {
   font-size: 4rem;
   margin-bottom: 1rem;
   opacity: 0.6;
-  color: #0088cc;
 }
 
 .emptyState h3 {
@@ -188,10 +127,10 @@
 
 .emptyState p {
   max-width: 300px;
-  margin: 0 0 1.5rem 0;
+  margin: 0;
 }
 
-.footer {
+.paginationWrapper {
   padding: 1rem;
   border-top: 1px solid var(--border-color);
   background: var(--bg-secondary);
@@ -212,7 +151,7 @@
   width: 40px;
   height: 40px;
   border: 4px solid var(--bg-light);
-  border-left: 4px solid #0088cc;
+  border-left: 4px solid var(--accent-color, #007bff);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin: 0 auto 1rem;
@@ -236,7 +175,6 @@
   height: 100vh;
   text-align: center;
   color: var(--text-color);
-  gap: 1rem;
 }
 
 .error h2 {
@@ -245,12 +183,6 @@
 }
 
 /* Responsive design */
-@media (max-width: 1200px) {
-  .listHeader {
-    display: none;
-  }
-}
-
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
@@ -265,22 +197,12 @@
   .controls {
     flex-direction: column;
     align-items: stretch;
-    gap: 1rem;
-  }
-
-  .searchSection,
-  .filterSection {
-    width: 100%;
   }
 
   .filterSection {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .filterButtons {
-    width: 100%;
-    justify-content: flex-start;
+    gap: 0.75rem;
   }
 
   .stats {
@@ -292,32 +214,17 @@
     font-size: 1.5rem;
   }
 
-  .accountsList {
+  .chatList {
     padding: 0.5rem;
   }
 }
 
 @media (max-width: 480px) {
+  .filterButtons {
+    justify-content: center;
+  }
+
   .searchSection {
     min-width: auto;
   }
-
-  .filterButtons {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .filterButtons button {
-    width: 100%;
-  }
-}
-
-/* Dark theme adjustments */
-[data-theme="dark"] .accountsList {
-  background: var(--bg-dark);
-}
-
-[data-theme="dark"] .listHeader {
-  background-color: rgba(255, 255, 255, 0.05);
-  border-bottom-color: rgba(255, 255, 255, 0.1);
 }
