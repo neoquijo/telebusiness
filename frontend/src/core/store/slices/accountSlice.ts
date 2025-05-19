@@ -1,8 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+// frontend/src/core/store/slices/accountSlice.ts
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Account, AccountInfo } from '../../../types/Account';
 import { NormalizedDialog } from '../../../modules/AccountsModule/types';
 
-export interface AuthState {
+export interface AccountState {
+  // Форма добавления аккаунта
   phone: string;
   accountName: string;
   use2fa: boolean;
@@ -11,11 +13,18 @@ export interface AuthState {
   password: string;
   session: string;
   accountInfo: AccountInfo | undefined;
+
+  // Данные для работы с аккаунтами
   dialogs: NormalizedDialog[];
-  currentAccount: Account | undefined
+  currentAccount: Account | undefined;
+
+  // Форма редактирования аккаунта
+  editMode: boolean;
+  editId: string | null;
 }
 
-const initialState: AuthState = {
+const initialState: AccountState = {
+  // Форма добавления аккаунта
   phone: '',
   code: '',
   accountName: '',
@@ -24,47 +33,101 @@ const initialState: AuthState = {
   password: '',
   session: '',
   accountInfo: undefined,
+
+  // Данные для работы с аккаунтами
   dialogs: [],
-  currentAccount: undefined
+  currentAccount: undefined,
+
+  // Форма редактирования аккаунта
+  editMode: false,
+  editId: null
 };
 
 export const accountSlice = createSlice({
-  name: 'auth',
+  name: 'account',
   initialState,
   reducers: {
-    setPhone: (state, { payload }) => {
-      state.phone = payload
+    // Общие редьюсеры для форм
+    setPhone: (state, { payload }: PayloadAction<string>) => {
+      state.phone = payload;
     },
-    setCode: (state, { payload }) => {
-      state.code = payload
+    setCode: (state, { payload }: PayloadAction<string>) => {
+      state.code = payload;
     },
-    setPassword: (state, { payload }) => {
-      state.password = payload
+    setPassword: (state, { payload }: PayloadAction<string>) => {
+      state.password = payload;
     },
-    setUse2Fa: (state, { payload }) => {
-      state.use2fa = payload
+    setUse2Fa: (state, { payload }: PayloadAction<boolean>) => {
+      state.use2fa = payload;
     },
-    setHash: (state, { payload }) => {
-      state.phoneCodeHash = payload
+    setHash: (state, { payload }: PayloadAction<string>) => {
+      state.phoneCodeHash = payload;
     },
-    setAccountName: (state, { payload }) => {
-      state.accountName = payload
+    setAccountName: (state, { payload }: PayloadAction<string>) => {
+      state.accountName = payload;
     },
-    setSessionString: (state, { payload }) => {
+    setSessionString: (state, { payload }: PayloadAction<string>) => {
       state.session = payload;
     },
-    setAccountInfo: (state, { payload }) => {
-      state.accountInfo = payload
+    setAccountInfo: (state, { payload }: PayloadAction<AccountInfo>) => {
+      state.accountInfo = payload;
     },
-    setDialogs: (state, { payload }) => {
-      state.dialogs = payload
+
+    // Работа с аккаунтами
+    setDialogs: (state, { payload }: PayloadAction<NormalizedDialog[]>) => {
+      state.dialogs = payload;
     },
-    setCurrentAccount: (state, { payload }) => {
-      state.currentAccount = payload
+    setCurrentAccount: (state, { payload }: PayloadAction<Account>) => {
+      state.currentAccount = payload;
+    },
+
+    // Редактирование аккаунта
+    startEditAccount: (state, { payload }: PayloadAction<Account>) => {
+      state.editMode = true;
+      state.editId = payload.id;
+      state.accountName = payload.name;
+      state.phone = payload.phone;
+      // Другие поля, которые можно редактировать
+    },
+
+    cancelEdit: (state) => {
+      state.editMode = false;
+      state.editId = null;
+      state.accountName = '';
+      state.phone = '';
+    },
+
+    // Сброс формы
+    resetAccountForm: (state) => {
+      state.phone = '';
+      state.code = '';
+      state.accountName = '';
+      state.use2fa = false;
+      state.phoneCodeHash = '';
+      state.password = '';
+      state.session = '';
+      state.accountInfo = undefined;
+      state.editMode = false;
+      state.editId = null;
     }
   },
 });
 
-export const { setCurrentAccount, setCode, setPhone, setHash, setPassword, setUse2Fa, setAccountName, setSessionString, setAccountInfo, setDialogs } = accountSlice.actions;
-export const authReducer = accountSlice.reducer;
-export default authReducer;
+export const {
+  setCurrentAccount,
+  setCode,
+  setPhone,
+  setHash,
+  setPassword,
+  setUse2Fa,
+  setAccountName,
+  setSessionString,
+  setAccountInfo,
+  setDialogs,
+  startEditAccount,
+  cancelEdit,
+  resetAccountForm
+} = accountSlice.actions;
+
+export const accountReducer = accountSlice.reducer;
+export default accountReducer;

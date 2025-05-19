@@ -4,7 +4,11 @@ export interface Account {
   username: string;
   sessionData: string;
   id: string;
+  firstname?: string;
+  lastname?: string;
   accountId: string;
+  createdAt: number;
+  avatar?: string;
   user: User;
   phone: string;
   name: string;
@@ -136,6 +140,7 @@ export interface AccountInfo {
   deleted: boolean;
   bot: boolean;
   botChatHistory: boolean;
+  photo: string;
   botNochats: boolean;
   verified: boolean;
   restricted: boolean;

@@ -1,0 +1,218 @@
+/* frontend/src/modules/AccountsModule/modals/EditAccount/EditAccountModal.module.css */
+.container {
+  background-color: var(--bg-primary);
+  border-radius: 1rem;
+  /* width: 500px; */
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.header {
+  padding: 1.5rem;
+  text-align: center;
+  background: linear-gradient(135deg, #0088cc, #00579b);
+  color: white;
+  position: relative;
+}
+
+.telegramIcon {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.content {
+  padding: 1.5rem;
+}
+
+.accountPreview {
+  position: relative;
+  background-color: var(--bg-light);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.accountStatus {
+  padding: 0.75rem;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.statusAlive,
+.statusExpired,
+.statusError {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+.statusAlive {
+  color: #4caf50;
+}
+
+.statusExpired {
+  color: #ff9800;
+}
+
+.statusError {
+  color: #f44336;
+}
+
+.statusDot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.statusIcon {
+  font-size: 1rem;
+}
+
+.accountInfo {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.accountAvatar {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.avatarPlaceholder {
+  font-size: 2rem;
+  color: var(--text-secondary);
+}
+
+.accountDetails {
+  flex: 1;
+}
+
+.username {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  margin-bottom: 0.25rem;
+}
+
+.fullName {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color);
+  margin-bottom: 0.25rem;
+}
+
+.phone {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.warningBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: rgba(255, 152, 0, 0.1);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.warningIcon {
+  font-size: 1.5rem;
+  color: #ff9800;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.warningText h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-color);
+}
+
+.warningText p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 576px) {
+  .container {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .content {
+    padding: 1rem;
+  }
+
+  .accountInfo {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .accountDetails {
+    text-align: center;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .accountPreview {
+  background-color: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .accountStatus {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .accountAvatar {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .warningBox {
+  background-color: rgba(255, 152, 0, 0.05);
+  border-color: rgba(255, 152, 0, 0.2);
+}
