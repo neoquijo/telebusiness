@@ -14,6 +14,7 @@ import { dialogSlice } from './slices/dialogSlice';
 import { chatsApi } from '../../API/chatsApi';
 import { filtersApi } from '../../API/filtersApi';
 import { messagesApi } from '../../API/messagesApi';
+import { leadsApi } from '../../API/leadsApi';
 
 export const mainStore = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const mainStore = configureStore({
     [chatsApi.reducerPath]: chatsApi.reducer,
     [filtersApi.reducerPath]: filtersApi.reducer,
     [messagesApi.reducerPath]: messagesApi.reducer,
+    [leadsApi.reducerPath]: leadsApi.reducer,
     account: accountSlice.reducer,
     auth: authSlice.reducer,
     canvas: canvasSlice.reducer,
@@ -39,6 +41,7 @@ export const mainStore = configureStore({
       .concat(chatsApi.middleware)
       .concat(filtersApi.middleware)
       .concat(messagesApi.middleware)
+      .concat(leadsApi.middleware)
 });
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector

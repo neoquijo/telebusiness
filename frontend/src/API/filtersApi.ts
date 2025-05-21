@@ -1,4 +1,3 @@
-// src/API/filtersApi.ts
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_URL } from '../config';
 import { FilteredResponse } from './types';
@@ -8,8 +7,14 @@ export interface MessageFilter {
   name: string;
   includesText: string[];
   excludesText: string[];
+  includesAll: string[];
+  includesMedia: boolean;
+  excludesMedia: boolean;
   regexp?: string;
   callbackTopic?: string;
+  matchGoal?: string;
+  batchSizeCharacters: number;
+  batchSizeMessages: number;
   createdAt: number;
   updatedAt: number;
 }
@@ -18,22 +23,40 @@ export interface CreateFilterDto {
   name: string;
   includesText?: string[];
   excludesText?: string[];
+  includesAll?: string[];
+  includesMedia?: boolean;
+  excludesMedia?: boolean;
   regexp?: string;
   callbackTopic?: string;
+  matchGoal?: string;
+  batchSizeCharacters?: number;
+  batchSizeMessages?: number;
 }
 
 export interface UpdateFilterDto {
   name?: string;
   includesText?: string[];
   excludesText?: string[];
+  includesAll?: string[];
+  includesMedia?: boolean;
+  excludesMedia?: boolean;
   regexp?: string;
   callbackTopic?: string;
+  matchGoal?: string;
+  batchSizeCharacters?: number;
+  batchSizeMessages?: number;
+}
+
+export interface TestFilterRequest {
+  messageText: string;
+  hasMedia?: boolean;
 }
 
 export interface TestFilterResponse {
   filterId: string;
   filterName: string;
   messageText: string;
+  hasMedia?: boolean;
   matches: boolean;
 }
 
@@ -84,11 +107,11 @@ export const filtersApi = createApi({
       }),
       invalidatesTags: ['filters']
     }),
-    testFilter: builder.mutation<TestFilterResponse, { id: string; messageText: string }>({
-      query: ({ id, messageText }) => ({
+    testFilter: builder.mutation<TestFilterResponse, { id: string; testData: TestFilterRequest }>({
+      query: ({ id, testData }) => ({
         url: `/${id}/test`,
         method: 'POST',
-        body: { messageText }
+        body: testData
       })
     })
   })

@@ -2,6 +2,7 @@
 import { FC, useState } from 'react';
 import css from './TestFilterModal.module.css';
 import Button from '../../../shared/components/UI/Button/Button';
+import Checkbox from '../../../shared/components/UI/Checkbox/Checkbox';
 import { FaPlay, FaCheck, FaTimes } from 'react-icons/fa';
 import { useTestFilterMutation } from '../../../API/filtersApi';
 import { infoError } from '../../../shared/lib/toastWrapper';
@@ -10,10 +11,12 @@ import TextBox from '../../../shared/components/UI/Textbox/Textbox';
 interface IProps {
   filterId: string;
   filterName: string;
+  hasMediaOption?: boolean;
 }
 
-const TestFilterModal: FC<IProps> = ({ filterId, filterName }) => {
+const TestFilterModal: FC<IProps> = ({ filterId, filterName, hasMediaOption = false }) => {
   const [testMessage, setTestMessage] = useState('');
+  const [hasMedia, setHasMedia] = useState(false);
   const [testFilter, { isLoading, data: testResult }] = useTestFilterMutation();
 
   const handleTest = async () => {
@@ -23,7 +26,13 @@ const TestFilterModal: FC<IProps> = ({ filterId, filterName }) => {
     }
 
     try {
-      await testFilter({ id: filterId, messageText: testMessage }).unwrap();
+      await testFilter({
+        id: filterId,
+        testData: {
+          messageText: testMessage,
+          hasMedia: hasMediaOption ? hasMedia : undefined
+        }
+      }).unwrap();
     } catch (error) {
       infoError('Ошибка при тестировании фильтра');
       console.error('Test filter error:', error);
@@ -45,6 +54,16 @@ const TestFilterModal: FC<IProps> = ({ filterId, filterName }) => {
           rows={6}
         />
 
+        {hasMediaOption && (
+          <div className={css.mediaOption}>
+            <Checkbox
+              label="Сообщение содержит медиафайлы (изображения, видео, документы и т.д.)"
+              checked={hasMedia}
+              onChange={() => setHasMedia(!hasMedia)}
+            />
+          </div>
+        )}
+
         {testResult && (
           <div className={css.result}>
             <div className={css.resultHeader}>
@@ -64,6 +83,11 @@ const TestFilterModal: FC<IProps> = ({ filterId, filterName }) => {
             <div className={css.testedMessage}>
               <strong>Протестированное сообщение:</strong>
               <p>{testResult.messageText}</p>
+              {hasMediaOption && (
+                <div className={css.testedMedia}>
+                  <strong>Наличие медиа:</strong> {testResult.hasMedia ? 'Да' : 'Нет'}
+                </div>
+              )}
             </div>
           </div>
         )}

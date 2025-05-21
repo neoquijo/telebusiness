@@ -15,6 +15,7 @@ import { dialogsModule } from "../../modules/DialogsModule/DialogsModule";
 import { tasksModule } from "../../modules/TasksModule/TasksModule";
 import { filtersModule } from "../../modules/FiltersModule/FiltersModule";
 import { messagesModule } from "../../modules/MessagesModule/MessagesModule";
+import { leadsModule } from "../../modules/LeadsModule/LeadsModule";
 
 const registry = ModuleRegistry.getInstance();
 const router = new AppRouter();
@@ -25,7 +26,8 @@ registry.registerModules([
   dialogsModule,
   filtersModule,
   messagesModule,
-  tasksModule
+  tasksModule,
+  leadsModule
 ]);
 router.addRoutes(registry.getAllRoutes());
 

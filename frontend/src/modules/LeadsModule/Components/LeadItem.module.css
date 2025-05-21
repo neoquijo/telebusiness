@@ -1,0 +1,190 @@
+.leadItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.leadItem:hover {
+  background-color: var(--bg-hover);
+}
+
+.leadInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 2;
+}
+
+.avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatarIcon {
+  font-size: 1.5rem;
+  color: var(--accent-color);
+}
+
+.name {
+  font-weight: 500;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contactIcon {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+}
+
+.contactText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.source {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text-color);
+  padding: 0 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.status {
+  flex: 1;
+  padding: 0 0.5rem;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  background-color: var(--bg-secondary);
+}
+
+.status-new {
+  background-color: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+}
+
+.status-in_progress {
+  background-color: rgba(33, 150, 243, 0.1);
+  color: #2196f3;
+}
+
+.status-completed {
+  background-color: rgba(156, 39, 176, 0.1);
+  color: #9c27b0;
+}
+
+.status-cancelled {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+.date {
+  flex: 1;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+
+.actions {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .leadItem {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .leadInfo {
+    flex-basis: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .contacts,
+  .source,
+  .status,
+  .date {
+    flex-basis: auto;
+    min-width: auto;
+  }
+
+  .contacts {
+    flex: 2;
+  }
+
+  .source {
+    flex: 1;
+  }
+
+  .status {
+    flex: 1;
+  }
+
+  .date {
+    flex: 1;
+  }
+
+  .actions {
+    flex-basis: 100%;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .leadItem {
+    padding: 0.75rem;
+  }
+
+  .source,
+  .status,
+  .date {
+    text-align: left;
+  }
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .statusBadge {
+  background-color: rgba(255, 255, 255, 0.05);
+}

@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { useGetFilteredMessagesQuery, useGetMessageStatisticsQuery } from '../../../API/messagesApi';
+import {
+  useGetFilteredMessagesQuery,
+  //  useGetMessageStatisticsQuery
+} from '../../../API/messagesApi';
 import { useGetFiltersQuery } from '../../../API/filtersApi';
 import Button from '../../../shared/components/UI/Button/Button';
 import SearchInput from '../../../shared/components/UI/SearchInput/SearchInput';
@@ -8,7 +11,7 @@ import { FaFilter } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import usePagination from '../../../shared/components/Navigation/Pagination/usePagination';
 import css from './FilteredMessagesPage.module.css';
-import StatisticsCard from './StatisticsCard';
+// import StatisticsCard from './StatisticsCard';
 import MessageItem from '../components/MessagesItem';
 
 const FilteredMessagesPage: React.FC = () => {
@@ -29,7 +32,7 @@ const FilteredMessagesPage: React.FC = () => {
   }).toString();
 
   const { data: messages, isLoading: messagesLoading, refetch } = useGetFilteredMessagesQuery(queryParams);
-  const { data: statistics } = useGetMessageStatisticsQuery('');
+  // const { data: statistics } = useGetMessageStatisticsQuery('');
   const { data: filtersData } = useGetFiltersQuery('');
 
   if (messagesLoading) {

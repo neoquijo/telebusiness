@@ -124,9 +124,9 @@
   width: 350px;
   height: 350px !important;
   align-self: center;
-  border: 1px solid white;
+  /* border: 1px solid white; */
   border-radius: 100%;
-  background: url('/logo2.png') center;
+  background: url('/img/tg-logo.svg') center;
   background-size: contain;
   background-repeat: no-repeat;
 }
