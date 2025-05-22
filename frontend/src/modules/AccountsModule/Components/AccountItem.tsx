@@ -2,12 +2,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { IoIosChatboxes } from 'react-icons/io';
-import { FaUserCircle, FaCircle, FaExclamationCircle, FaInfoCircle, FaRedo, FaPencilAlt } from 'react-icons/fa';
+import { FaUserCircle, FaCircle, FaExclamationCircle, FaInfoCircle, FaRedo, FaPencilAlt, FaSignInAlt } from 'react-icons/fa';
 import { Account } from '../../../types/Account';
 import { setCurrentAccount, startEditAccount } from '../../../core/store/slices/accountSlice';
 import { useModalManager } from '../../../core/providers/modal/ModalProvider';
+import { useRefreshSessionMutation } from '../../../API/accountsApi';
 import css from './AccountItem.module.css';
 import EditAccountModal from '../modals/EditAccount/EditAccountModal';
+import CreateAccountModal from '../modals/CreateAccount/CreateAccountModal';
+import ReLoginAccountModal from '../modals/ReLoginAccount/ReLoginAccountModal';
+import { infoError, infoSuccess } from '../../../shared/lib/toastWrapper';
 
 interface IProps {
   item: Account;
@@ -17,6 +21,7 @@ const AccountItem: React.FC<IProps> = ({ item }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const modal = useModalManager();
+  const [refreshSession] = useRefreshSessionMutation();
 
   const handleNavigateToChats = () => {
     dispatch(setCurrentAccount(item));
@@ -28,6 +33,14 @@ const AccountItem: React.FC<IProps> = ({ item }) => {
     dispatch(startEditAccount(item));
     modal.openModal('editAccount', <EditAccountModal account={item} />, {
       title: 'Редактирование аккаунта'
+    });
+  };
+
+  const handleReLogin = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Открываем модальное окно для повторного входа
+    modal.openModal('reLoginAccount', <ReLoginAccountModal account={item} />, {
+      title: 'Повторный вход в аккаунт'
     });
   };
 
@@ -126,6 +139,17 @@ const AccountItem: React.FC<IProps> = ({ item }) => {
           >
             <FaRedo className={css.actionIcon} />
             <span>Обновить</span>
+          </button>
+        )}
+        
+        {item.status === 'error' && (
+          <button
+            onClick={handleReLogin}
+            className={`${css.actionButton} ${css.errorButton}`}
+            title="Войти заново"
+          >
+            <FaSignInAlt className={css.actionIcon} />
+            <span>Войти заново</span>
           </button>
         )}
       </div>

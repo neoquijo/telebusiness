@@ -136,6 +136,14 @@
   background-color: #f57c00;
 }
 
+.errorButton {
+  background-color: #f44336;
+}
+
+.errorButton:hover {
+  background-color: #d32f2f;
+}
+
 .actionIcon {
   font-size: 1rem;
 }

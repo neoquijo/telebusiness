@@ -8,6 +8,12 @@ export interface EditAccountRequest {
   name: string;
 }
 
+export interface UpdateSessionRequest {
+  id: string;
+  session: string;
+  accountName?: string;
+}
+
 export const accountsApi = createApi({
   reducerPath: 'accountsApi',
   tagTypes: ['accounts', 'accountChats', 'account'],
@@ -78,6 +84,19 @@ export const accountsApi = createApi({
       invalidatesTags: ['accounts']
     }),
 
+    // Обновление сессии существующего аккаунта
+    updateAccountSession: builder.mutation<{ success: boolean, account: Account }, UpdateSessionRequest>({
+      query: data => ({
+        url: '/update-session',
+        method: 'POST',
+        body: data
+      }),
+      invalidatesTags: (_, __, arg) => [
+        'accounts',
+        { type: 'account', id: arg.id }
+      ]
+    }),
+
     // Редактирование аккаунта
     editAccount: builder.mutation<Account, EditAccountRequest>({
       query: ({ id, ...data }) => ({
@@ -123,6 +142,7 @@ export const {
   useDeleteAccountMutation,
   useEditAccountMutation,
   useRefreshSessionMutation,
+  useUpdateAccountSessionMutation,
   useGetAccountQuery,
   useGetAccountChatsQuery,
   useGetAccountsQuery,
