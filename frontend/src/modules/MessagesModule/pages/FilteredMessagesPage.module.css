@@ -65,7 +65,24 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-color);
+  margin-bottom: 0;
+}
+
+.filterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
   margin-bottom: 0.5rem;
+}
+
+.filterHeader:hover {
+  background: var(--bg-hover);
 }
 
 .filterCheckboxes {
@@ -78,6 +95,18 @@
   background: var(--bg-secondary);
   border-radius: 0.5rem;
   border: 1px solid var(--border-color);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 200px;
+    opacity: 1;
+  }
 }
 
 .filterCheckbox {

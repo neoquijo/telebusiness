@@ -18,7 +18,7 @@ const routes: RouteConfig[] = [
     layout: DashboardLayout,
     navigable: true,
     icon: FaFilter,
-    allowedRoles: ['admin'],
+    allowedRoles: ['admisn'],
     subModules: [
       {
         path: "/create",

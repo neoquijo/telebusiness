@@ -96,7 +96,7 @@ const FiltersPage: React.FC = () => {
                 filter={filter}
                 index={index}
                 searchQuery={searchQuery}
-                onEdit={(id) => navigate(`/filters/edit/${id}`)}
+                onEdit={(id) => navigate(`/filters/${id}?edit=true`)}
                 onDelete={handleDeleteFilter}
               />
             ))

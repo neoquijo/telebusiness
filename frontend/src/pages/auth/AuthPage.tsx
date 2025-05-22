@@ -6,7 +6,7 @@ import { authService } from '../../services/auth/authService';
 const AuthPage: FC = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const returnTo = params.get('to');
+  const returnTo = params.get('returnTo');
 
   useEffect(() => {
     const checkAuthentication = async () => {
@@ -16,18 +16,26 @@ const AuthPage: FC = () => {
         try {
           const isAuthenticated = await authService.checkAuth(storedToken);
           if (isAuthenticated) {
-            navigate(returnTo || '/');
+            if (returnTo) {
+              if (!returnTo.startsWith('/auth') && !returnTo.startsWith('/login')) {
+                navigate(returnTo);
+              } else {
+                navigate('/');
+              }
+            } else {
+              navigate('/');
+            }
           } else {
-            localStorage.removeItem('token')
-            navigate('/login');
+            localStorage.removeItem('token');
+            navigate(returnTo ? `/login?returnTo=${encodeURIComponent(returnTo)}` : '/login');
           }
         } catch (error) {
-          localStorage.removeItem('token')
+          localStorage.removeItem('token');
           console.error('Authentication check failed:', error);
-          navigate('/login');
+          navigate(returnTo ? `/login?returnTo=${encodeURIComponent(returnTo)}` : '/login');
         }
       } else {
-        navigate('/login');
+        navigate(returnTo ? `/login?returnTo=${encodeURIComponent(returnTo)}` : '/login');
       }
     };
 

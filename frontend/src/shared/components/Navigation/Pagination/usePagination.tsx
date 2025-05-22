@@ -18,9 +18,19 @@ const usePagination = (initialPage = 1, initialLimit = 10): UsePaginationReturn 
   const Pagination: React.FC<PaginationProps> = ({ totalItems }) => {
     const totalPages = Math.ceil((totalItems + 1) / limit);
     const [inputPage, setInputPage] = useState(page);
+
     useEffect(() => {
       setInputPage(page);
     }, [page]);
+
+    useEffect(() => {
+      const newTotalPages = Math.ceil((totalItems + 1) / limit);
+      if (page > newTotalPages && newTotalPages > 0) {
+        setPage(newTotalPages);
+      } else if (newTotalPages === 0 && totalItems === 0) { // Если нет элементов, устанавливаем страницу 1
+        setPage(1);
+      }
+    }, [totalItems, limit, page]);
 
     const handlePageChange = (newPage: number) => {
       if (newPage >= 1 && newPage <= totalPages) {

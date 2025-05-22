@@ -1,11 +1,11 @@
 import css from './Auth.module.css'
 import { FC, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLoginMutation } from '../../API/authApi';
 import { authService } from '../../services/auth/authService';
 import { useAppDispatch, useAppSelector } from '../../core/store/MainStore';
-import { setAuth } from '../../core/store/slices/authSlice';
-
+import { setAuth, setUser } from '../../core/store/slices/authSlice';
+import { toast } from 'react-toastify';
 
 interface IPProps {
 
@@ -14,26 +14,55 @@ const LoginPage: FC<IPProps> = () => {
 
   const [login, setLogin] = useState<string>()
   const [password, setPassword] = useState<string>()
-  const { isAuth } = useAppSelector(s => s.auth)
+  const { isAuth, user } = useAppSelector(s => s.auth)
   const dispatch = useAppDispatch()
-  const [doLogin, { data, isSuccess: successLogin }] = useLoginMutation()
+  const [doLogin, { data, isSuccess: successLogin, isError, error }] = useLoginMutation()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get('returnTo');
 
   useEffect(() => {
     if (successLogin && data) {
       authService.checkAuth(data.access_token)
-      dispatch(setAuth(true))
+        .then(success => {
+          if (success) {
+            dispatch(setAuth(true))
+          } else {
+            toast.error('Ошибка при проверке авторизации')
+          }
+        })
     }
-  }, [successLogin, navigate])
+  }, [successLogin, data, dispatch])
+
   useEffect(() => {
-    if (isAuth) {
-      navigate('/')
+    if (isError) {
+      // @ts-ignore
+      const errorMessage = error?.data?.message || 'Ошибка авторизации. Проверьте логин и пароль.';
+      toast.error(errorMessage);
     }
-  }, [isAuth])
+  }, [isError, error])
+
+  useEffect(() => {
+    // Только если пользователь авторизован и у него есть роль
+    if (isAuth && user?.role) {
+      if (returnTo && !returnTo.startsWith('/auth') && !returnTo.startsWith('/login')) {
+        navigate(returnTo);
+      } else {
+        navigate('/');
+      }
+    }
+  }, [isAuth, user, returnTo, navigate])
 
   const handleLogin = async () => {
-    if (login && password)
+    if (!login || !password) {
+      toast.warning('Введите логин и пароль');
+      return;
+    }
+    try {
       doLogin({ username: login, password })
+    } catch (err) {
+      toast.error('Ошибка при попытке входа');
+    }
   }
 
   // const [verify, { isSuccess: gotToken }] = useVerifyBusinessTokenMutation()

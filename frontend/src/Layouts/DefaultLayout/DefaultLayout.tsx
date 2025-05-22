@@ -1,4 +1,5 @@
 import { ComponentType, FC } from 'react';
+import { MobileMenu } from '../../shared/components/MobileMenu/MobileMenu';
 import css from './DefaultLayout.module.css';
 
 interface IProps {
@@ -8,7 +9,9 @@ interface IProps {
 const DefaultLayout: FC<IProps> = ({ Component }) => {
   return (
     <div className={css.layoutWrapper}>
-      {<Component />}
+      <main className={css.mainContent}>
+        <Component />
+      </main>
     </div>
   );
 };

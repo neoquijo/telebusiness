@@ -17,6 +17,7 @@ export class AppRouter {
       <Routes>
         {this.routes.map((route, index) => {
           if (route.allowedRoles) {
+            // Маршрут защищенный, если у него есть allowedRoles
             return (<>
               <Route
                 key={index}
@@ -52,6 +53,7 @@ export class AppRouter {
             </>
             );
           } else {
+            // Маршрут публичный, если у него нет allowedRoles
             return (<>
               <Route
                 key={index}
@@ -59,15 +61,37 @@ export class AppRouter {
                 element={route.layout ? <route.layout TopbarWidget={route.topWidget} Component={route.component} {...route.props} /> : <DefaultLayout Component={route.component} {...route.props} />}
               />
 
-              {route.subModules?.map((sub, index) => {
-                return (
-                  <Route
-                    key={index}
-                    path={route.path + sub?.path}
-                    element={route.layout ? <route.layout TopbarWidget={sub?.topWidget} Component={sub?.component} {...sub?.props} /> : <DefaultLayout Component={sub!.component} {...sub?.props} />}
-                  />
-
-                )
+              {route.subModules?.map((sub, subIndex) => {
+                if (sub?.allowedRoles) {
+                  // Если у подмаршрута есть allowedRoles, он становится защищенным
+                  return (
+                    <Route
+                      key={`${index}-${subIndex}`}
+                      path={`${route.path}${sub?.path}`}
+                      element={
+                        <PrivateRoute
+                          redirectUrl={`${route.path}${sub?.path}`}
+                          allowedRoles={sub?.allowedRoles || []}
+                        >
+                          {sub?.layout ? (
+                            <sub.layout TopbarWidget={sub.topWidget} Component={sub.component} {...sub.props} />
+                          ) : (
+                            <DefaultLayout Component={sub!.component} {...sub!.props} />
+                          )}
+                        </PrivateRoute>
+                      }
+                    />
+                  );
+                } else {
+                  // Если у подмаршрута нет allowedRoles, он публичный
+                  return (
+                    <Route
+                      key={`${index}-${subIndex}`}
+                      path={`${route.path}${sub?.path}`}
+                      element={route.layout ? <route.layout TopbarWidget={sub?.topWidget} Component={sub?.component} {...sub?.props} /> : <DefaultLayout Component={sub!.component} {...sub?.props} />}
+                    />
+                  );
+                }
               })}
             </>
             );

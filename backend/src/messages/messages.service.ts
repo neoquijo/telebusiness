@@ -6,11 +6,13 @@ import { User } from "src/users/models/user.schema";
 import { ReqFilters } from "src/decorators/ReqFilters";
 import { filteredRequest } from "src/utils/filteredRequests";
 import { NormalizedMessage } from "src/filters/models/telegram-message.dto";
+import { MessageFilterService } from "src/filters/message-filter.service";
 
 @Injectable()
 export class MessagesService {
   constructor(
-    @InjectModel(TelegramMessage.name) private readonly messageModel: Model<TelegramMessage>
+    @InjectModel(TelegramMessage.name) private readonly messageModel: Model<TelegramMessage>,
+    private readonly filterService: MessageFilterService
   ) { }
 
   async getUserMessages(filters: ReqFilters, user: User) {
@@ -20,15 +22,17 @@ export class MessagesService {
       if (filters.searchQuery) {
         query['messageText'] = { "$regex": filters.searchQuery, "$options": "i" };
       }
-
-      return await filteredRequest(
+      const filteredMessages = await filteredRequest(
         this.messageModel,
         filters,
         query,
-        [
-          { path: 'filtered', select: 'name callbackTopic' }
-        ]
+        [{ path: 'filtered', select: 'name callbackTopic id' }]
       );
+
+      return {
+        ...filteredMessages,
+        items: [...filteredMessages.items]
+      };
     } catch (error) {
       throw new BadRequestException('Failed to get messages');
     }
@@ -37,30 +41,58 @@ export class MessagesService {
   async getFilteredMessages(filters: ReqFilters, user: User) {
     try {
       const query: any = {
-        user: user._id,
-        filtered: { $exists: true, $ne: [] }
+        user: user._id
       };
 
       if (filters.searchQuery) {
-        query['messageText'] = { "$regex": filters.searchQuery, "$options": "i" };
+        query.messageText = { "$regex": filters.searchQuery, "$options": "i" };
       }
 
-      // Обработка множественных фильтров
-      if (filters.filters && filters.filters.length > 0) {
-        const filterIds = filters.filters.split(',').map(id => new Types.ObjectId(id));
-        query.filtered = { $in: filterIds };
+      // Проверяем наличие фильтров
+      if (!filters.filters || !filters.filters.length) {
+        // Если фильтры не указаны, ищем все фильтрованные сообщения
+        query.filtered = { $exists: true, $ne: [] };
+      } else {
+        // Получаем массив ID фильтров
+        const filterIds = filters.filters.split(',');
+
+        // Находим фильтры пользователя по их ID
+        const userFilters = await this.filterService.getFiltersByIds(filterIds, user);
+
+        if (userFilters && userFilters.length > 0) {
+          // Извлекаем ObjectId найденных фильтров
+          const filterObjectIds = userFilters.map(filter => filter._id);
+          
+          // Ищем сообщения с указанными фильтрами
+          query.filtered = { $in: filterObjectIds };
+        } else {
+          // Если не найдено ни одного фильтра, возвращаем пустой результат
+          return {
+            currentPage: 1,
+            pageSize: filters.limit || 10,
+            totalItems: 0,
+            totalPages: 0,
+            items: []
+          };
+        }
       }
 
-      return await filteredRequest(
+      // Получаем отфильтрованные сообщения
+      const filteredMessages = await filteredRequest(
         this.messageModel,
         filters,
         query,
-        [
-          { path: 'filtered', select: 'name callbackTopic' }
-        ]
+        [{ path: 'filtered', select: 'name callbackTopic id' }]
       );
+      
+      // Сортировка результатов
+      return {
+        ...filteredMessages,
+        items: [...filteredMessages.items].reverse()
+      };
     } catch (error) {
-      throw new BadRequestException('Failed to get filtered messages');
+      console.error('Failed to get filtered messages:', error);
+      throw new BadRequestException('Failed to get filtered messages: ' + error.message);
     }
   }
 
