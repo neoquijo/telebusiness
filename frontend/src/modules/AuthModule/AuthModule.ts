@@ -2,6 +2,7 @@ import { BaseModule, RouteConfig } from "../../core/Module";
 
 import AuthPage from "../../pages/auth/AuthPage";
 import LoginPage from "../../pages/auth/LoginPage";
+import UnauthorizedPage from "../../pages/unauthorized/UnauthorizedPage";
 
 const routes: RouteConfig[] = [{
   path: "/auth",
@@ -13,6 +14,11 @@ const routes: RouteConfig[] = [{
   path: "/login",
   component: LoginPage,
   title: "Login"
+},
+{
+  path: "/unauthorized",
+  component: UnauthorizedPage,
+  title: "Доступ запрещен"
 }]
 
 export const authModule = new BaseModule('authModule', routes)

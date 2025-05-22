@@ -6,7 +6,7 @@ import {
 import { useGetFiltersQuery } from '../../../API/filtersApi';
 import Button from '../../../shared/components/UI/Button/Button';
 import SearchInput from '../../../shared/components/UI/SearchInput/SearchInput';
-import { MdFilterList } from 'react-icons/md';
+import { MdFilterList, MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md';
 import { FaFilter } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import usePagination from '../../../shared/components/Navigation/Pagination/usePagination';
@@ -19,6 +19,7 @@ const FilteredMessagesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [showFilters, setShowFilters] = useState(false);
   const { Pagination, page, limit } = usePagination(1, 20);
 
   const queryParams = new URLSearchParams({
@@ -40,6 +41,10 @@ const FilteredMessagesPage: React.FC = () => {
         ? prev.filter(id => id !== filterId)
         : [...prev, filterId]
     );
+  };
+
+  const toggleFilters = () => {
+    setShowFilters(!showFilters);
   };
 
   if (messagesLoading) {
@@ -109,19 +114,26 @@ const FilteredMessagesPage: React.FC = () => {
           </div>
 
           <div className={css.filterSection}>
-            <label className={css.filterLabel}>Фильтры:</label>
-            <div className={css.filterCheckboxes}>
-              {filtersData?.items.map(filter => (
-                <label key={filter.id} className={css.filterCheckbox}>
-                  <input
-                    type="checkbox"
-                    checked={selectedFilters.includes(filter.id)}
-                    onChange={() => handleFilterToggle(filter.id)}
-                  />
-                  <span>{filter.name}</span>
-                </label>
-              ))}
+            <div className={css.filterHeader} onClick={toggleFilters}>
+              <label className={css.filterLabel}>
+                Фильтры: {selectedFilters.length > 0 ? `(Выбрано: ${selectedFilters.length})` : ''}
+              </label>
+              {showFilters ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
             </div>
+            {showFilters && (
+              <div className={css.filterCheckboxes}>
+                {filtersData?.items.map(filter => (
+                  <label key={filter.id} className={css.filterCheckbox}>
+                    <input
+                      type="checkbox"
+                      checked={selectedFilters.includes(filter.id)}
+                      onChange={() => handleFilterToggle(filter.id)}
+                    />
+                    <span>{filter.name}</span>
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
 
           <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
@@ -146,7 +158,6 @@ const FilteredMessagesPage: React.FC = () => {
                 message={message}
                 index={index}
                 searchQuery={searchQuery}
-                onClick={() => navigate(`/messages/detail/${message.id}`)}
               />
             ))
           ) : (

@@ -1,29 +1,21 @@
 .layoutWrapper {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-}
-
-.container {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  /* Размещаем элементы по вертикали */
-  flex: 1;
 }
 
-.topbar {
-  height: 5em;
-  /* Фиксированная высота */
-  flex-shrink: 0;
-  /* Не даём Topbar изменять размер */
+.mainContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.component {
-  flex: 1;
-  /* Занимает всё оставшееся пространство */
-  overflow: auto;
-  /* Добавляем прокрутку для содержимого, если оно превышает высоту */
-  box-sizing: border-box;
-  /* Учитываем padding */
-  padding: 1em;
+@media (max-width: 768px) {
+  .mainContent {
+    padding: 15px;
+  }
 }

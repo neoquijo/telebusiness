@@ -36,6 +36,7 @@ const FilterDetailPage: React.FC<IProps> = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
   useEffect(() => {
+    console.log(searchParams.getAll('edit'))
     if (filter) {
       setFormData({
         name: filter.name,

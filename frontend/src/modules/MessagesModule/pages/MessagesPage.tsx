@@ -15,7 +15,7 @@ const MessagesPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [sourceType, setSourceType] = useState<string | null>(null);
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const { Pagination, page, limit } = usePagination(1, 20);
   const [isOverviewVisible, setIsOverviewVisible] = useState(false);
 
@@ -140,7 +140,7 @@ const MessagesPage: React.FC = () => {
                 message={message}
                 index={index}
                 searchQuery={searchQuery}
-                onClick={() => navigate(`/messages/detail/${message.id}`)}
+                // onClick={() => navigate(`/messages/detail/${message.id}`)}
               />
             ))
           ) : (

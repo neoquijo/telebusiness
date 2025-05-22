@@ -156,4 +156,11 @@ export class MessageFilterService {
 
     return true;
   }
+
+  async getFiltersByIds(ids: string[], user: User) {
+    return await this.messageFilterModel.find({
+      id: { $in: ids },
+      user: user._id
+    }).exec();
+  }
 }

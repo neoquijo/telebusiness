@@ -6,6 +6,7 @@ import { mainStore } from "../store/MainStore";
 import { ThemeProvider } from "./theme/themeProvider";
 import { authModule } from "../../modules/AuthModule/AuthModule";
 import { Bounce, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 import { ModalProvider } from "./modal/ModalProvider";

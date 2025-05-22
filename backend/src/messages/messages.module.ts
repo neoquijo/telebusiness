@@ -4,16 +4,18 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TelegramMessage, telegramMessageSchema } from './models/message.model';
 import { MessagesController } from './messages.controller';
 import { AuthModule } from 'src/auth/auth.module';
+import { FiltersModule } from 'src/filters/filters.module';
 
 @Module({
+  controllers: [MessagesController],
+  providers: [MessagesService],
   imports: [
-    AuthModule,
     MongooseModule.forFeature([
       { name: TelegramMessage.name, schema: telegramMessageSchema }
-    ])
+    ]),
+    AuthModule,
+    FiltersModule
   ],
-  providers: [MessagesService],
-  exports: [MessagesService],
-  controllers: [MessagesController]
+  exports: [MessagesService]
 })
 export class MessagesModule { }
