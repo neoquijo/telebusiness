@@ -210,42 +210,57 @@
   }
 }
 
-/* Responsive design */
+/* Улучшенный адаптивный дизайн */
 @media (max-width: 768px) {
   .container {
+    padding: 0.75rem;
+    height: calc(100vh - 4em);
+  }
+
+  .header {
     padding: 1rem;
+    margin-bottom: 0.75rem;
   }
 
   .headerContent {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem !important;
+  }
+
+  .titleIcon {
+    font-size: 1.5rem;
   }
 
   .headerActions {
     width: 100%;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  .statistics {
-    grid-template-columns: 1fr;
+  .headerActions button {
+    width: 100%;
   }
 
   .controls {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
   }
 
-  .filterSection {
-    align-items: stretch;
-  }
-
-  .filterSelect {
+  .searchSection {
+    width: 100%;
     min-width: auto;
   }
 
-  .title {
-    font-size: 1.5rem;
+  .filterSection {
+    width: 100%;
+    min-width: auto;
   }
 
   .messageList {
@@ -254,26 +269,59 @@
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+
+  .header {
+    padding: 0.75rem;
+  }
+
   .searchSection {
     min-width: auto;
   }
 
   .headerActions {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
 
-  .statistics {
-    gap: 0.75rem;
+  .title {
+    font-size: 1.25rem !important;
+  }
+
+  .titleIcon {
+    font-size: 1.25rem;
+  }
+
+  .emptyIcon {
+    font-size: 3rem;
+  }
+
+  .filterHeader {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .filterCheckboxes {
+    max-height: 150px;
+  }
+
+  .filterCheckbox {
+    padding: 0.4rem;
+  }
+
+  .filterCheckbox span {
+    font-size: 0.8rem;
   }
 }
 
 /* Dark theme adjustments */
 [data-theme="dark"] .filterSelect {
-  background-color: var(--bg-dark);
-  border-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--bg-primary-dark);
+  color: var(--text-color-dark);
 }
 
 [data-theme="dark"] .filterSelect:focus {
-  box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.15);
+  border-color: var(--border-color-focus-dark);
 }

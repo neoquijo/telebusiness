@@ -1,20 +1,22 @@
 /* frontend/src/modules/MessagesModule/Components/StatisticsCard.module.css */
 .card {
-  background: var(--bg-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 0.75rem;
-  padding: 1rem;
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   transition: all 0.2s ease;
-  flex: 1;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
 .card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
 .header {
-
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -31,38 +33,67 @@
 }
 
 .icon {
-  color: white;
-  font-size: 1.5rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 1.8rem;
 }
 
 .content {
   flex: 1;
   display: flex;
-  align-items: center;
+  flex-direction: column;
 }
 
 .title {
-  font-size: 0.875rem !important;
-  font-weight: 500;
+  font-size: 0.9rem;
   color: var(--text-secondary);
-  margin: 0 0 0.5rem 0;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
 }
 
 .value {
-  font-size: 1.75rem;
+  font-size: 1.8rem;
   font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.3rem;
   color: var(--text-color);
-  line-height: 1;
-  margin-bottom: 0.25rem;
 }
 
 .subtitle {
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  margin: 0;
-  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--text-tertiary, #999);
+}
+
+/* Компактный режим для мобильных устройств */
+.compactCard {
+  padding: 0.8rem;
+  border-radius: 8px;
+  gap: 0.5rem;
+}
+
+.compactCard .icon {
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  border-radius: 6px;
+}
+
+.compactValue {
+  font-size: 1.2rem;
+  margin-bottom: 0.1rem;
+}
+
+.compactTitle {
+  font-size: 0.75rem;
+  margin-bottom: 0;
+}
+
+.compactSubtitle {
+  font-size: 0.7rem;
 }
 
 /* Responsive design */
@@ -70,31 +101,36 @@
   .card {
     padding: 1rem;
   }
-
-  .iconContainer {
-    width: 2.5rem;
-    height: 2.5rem;
-  }
-
+  
   .icon {
-    font-size: 1.25rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
   }
-
+  
   .value {
     font-size: 1.5rem;
   }
 }
 
 @media (max-width: 480px) {
-  .header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.75rem;
+  .card {
+    padding: 0.8rem;
+    gap: 0.5rem;
   }
-
-  .content {
-    width: 100%;
+  
+  .icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+  }
+  
+  .value {
+    font-size: 1.3rem;
+  }
+  
+  .title {
+    font-size: 0.8rem;
   }
 }
 

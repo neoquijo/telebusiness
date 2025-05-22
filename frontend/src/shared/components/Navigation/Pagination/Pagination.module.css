@@ -2,12 +2,16 @@
   display: flex;
   align-items: center;
   gap: 1em;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
 }
 
 .pages {
   white-space: nowrap;
   display: flex;
   gap: 3px;
+  align-items: center;
 }
 
 .toPage {
@@ -22,11 +26,72 @@
   background-color: var(--bg-primary);
   width: fit-content;
   height: fit-content;
-  padding: 2px 8px;
-  border-radius: 5px;
+  padding: 0.4em 0.8em;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.page:hover {
+  background-color: var(--bg-hover);
 }
 
 .activePage {
-  background-color: white;
-  color: black;
+  background-color: var(--accent-color, #007bff);
+  color: white;
+  font-weight: 500;
+}
+
+.toPage input {
+  width: 3rem;
+  padding: 0.4em;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    gap: 0.3em;
+    font-size: 0.85rem;
+    padding: 0;
+  }
+  
+  .toPage {
+    display: none;
+  }
+  
+  .pages {
+    width: 100%;
+    justify-content: center;
+    gap: 2px;
+  }
+  
+  .page, .activePage {
+    padding: 0.3em 0.6em;
+    font-size: 0.8rem;
+    min-width: 1em;
+    text-align: center;
+  }
+
+  .wrapper > div:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    font-size: 0.8rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+  
+  .page, .activePage {
+    padding: 0.25em 0.5em;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    min-width: 1.5em;
+    text-align: center;
+  }
 }

@@ -1,0 +1,157 @@
+/* Улучшенные стили для мобильных фильтров */
+
+/* Контейнер для фильтров */
+.modalFilters {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.5rem !important;
+  margin-bottom: 1rem !important;
+  max-height: 35vh !important;
+  overflow-y: auto !important;
+  padding-right: 0.5rem !important;
+}
+
+/* Прокрутка для мобильных фильтров */
+.modalFilters::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.modalFilters::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.05) !important;
+  border-radius: 10px !important;
+}
+
+.modalFilters::-webkit-scrollbar-thumb {
+  background: var(--accent-color, #007bff) !important;
+  border-radius: 10px !important;
+}
+
+/* Элемент фильтра */
+.modalFilterItem {
+  display: flex !important;
+  align-items: center !important;
+  padding: 0.85rem !important;
+  background: var(--bg-secondary, #f5f5f5) !important;
+  border-radius: 0.75rem !important;
+  cursor: pointer !important;
+  position: relative !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+  gap: 0.75rem !important;
+  user-select: none !important;
+  border: 1px solid transparent !important;
+}
+
+/* Наведение на элемент фильтра */
+.modalFilterItem:active {
+  transform: scale(0.98) !important;
+}
+
+/* Активный фильтр */
+.activeFilter {
+  background: rgba(var(--accent-color-rgb, 0, 123, 255), 0.1) !important;
+  border: 1px solid rgba(var(--accent-color-rgb, 0, 123, 255), 0.3) !important;
+}
+
+/* Маркер активного фильтра */
+.activeFilterMark {
+  position: absolute !important;
+  top: 50% !important;
+  right: 1rem !important;
+  transform: translateY(-50%) !important;
+  width: 0.5rem !important;
+  height: 0.5rem !important;
+  border-radius: 50% !important;
+  background: var(--accent-color, #007bff) !important;
+  box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb, 0, 123, 255), 0.25) !important;
+}
+
+/* Иконка фильтра */
+.modalFilterIcon {
+  font-size: 1.2rem !important;
+  color: var(--accent-color, #007bff) !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Кнопка сортировки */
+.modalSortButton,
+.modalSortOption {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 0.85rem !important;
+  background: var(--bg-secondary, #f5f5f5) !important;
+  border-radius: 0.75rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+  user-select: none !important;
+  border: 1px solid transparent !important;
+}
+
+.modalSortButton:active,
+.modalSortOption:active {
+  transform: scale(0.98) !important;
+}
+
+/* Секция в модальном окне */
+.modalSection {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
+}
+
+.modalSection h3 {
+  font-size: 1rem !important;
+  margin: 0 0 0.75rem 0 !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary, #666) !important;
+  position: relative !important;
+  padding-left: 0.75rem !important;
+  border-left: 3px solid var(--accent-color, #007bff) !important;
+}
+
+/* Кнопки действий */
+.modalActions {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.75rem !important;
+}
+
+.modalButton,
+.modalSecondaryButton {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
+  padding: 0.85rem !important;
+  border: none !important;
+  border-radius: 0.75rem !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.modalButton {
+  background: var(--accent-color, #007bff) !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(var(--accent-color-rgb, 0, 123, 255), 0.3) !important;
+}
+
+.modalSecondaryButton {
+  background: var(--bg-secondary, #f5f5f5) !important;
+  color: var(--text-color, #333) !important;
+}
+
+.modalButton:active,
+.modalSecondaryButton:active {
+  transform: translateY(2px) !important;
+}
+
+.modalButtonIcon {
+  font-size: 1.2rem !important;
+} 

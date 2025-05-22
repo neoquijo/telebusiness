@@ -244,6 +244,330 @@
   margin-bottom: 0.5rem;
 }
 
+/* Мобильный интерфейс */
+.mobileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+}
+
+.mobileTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobileTitle h1 {
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.mobileActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.mobileActionButton {
+  background: rgba(var(--accent-color-rgb, 0, 123, 255), 0.1);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--accent-color, #007bff);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.mobileActionButton:hover,
+.mobileActionButton:active {
+  background-color: var(--accent-color, #007bff);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Мобильная панель поиска */
+.mobileSearchPanel {
+  background: var(--bg-primary);
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  animation: slideDown 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Мобильная метка фильтра */
+.mobileFilterBadge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-color, #007bff);
+  color: white;
+  padding: 0.25rem 0.6rem 0.25rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+  margin-left: 0.25rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  gap: 0.35rem;
+  animation: fadeIn 0.3s;
+}
+
+.filterBadgeIcon {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Мобильная статистика */
+.mobileStats {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0 0.5rem 0.75rem;
+}
+
+.mobileStatItem {
+  flex: 1;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.mobileStatValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-color, #007bff);
+  line-height: 1.2;
+  display: block;
+}
+
+.mobileStatLabel {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  margin-top: 0.2rem;
+  display: block;
+}
+
+/* Модальное окно */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(3px);
+}
+
+.modalContent {
+  width: 100%;
+  background: var(--bg-primary);
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: 1.5rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  transform: translateY(100%);
+  animation: slideUp 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modalHeader h2 {
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modalClose:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.modalSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modalSection h3 {
+  font-size: 1rem;
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.modalFilters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modalFilterItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+  font-weight: 500;
+  gap: 0.75rem;
+  border: 1px solid transparent;
+}
+
+.modalFilterItem:hover {
+  background: var(--bg-hover);
+}
+
+.activeFilter {
+  background: rgba(var(--accent-color-rgb, 0, 123, 255), 0.1);
+}
+
+.activeFilterMark {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent-color);
+}
+
+.modalFilterIcon {
+  font-size: 1.25rem;
+}
+
+.modalSortOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modalSortItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.modalSortItem:hover {
+  background: var(--bg-hover);
+}
+
+.activeSortItem {
+  background: rgba(var(--accent-color-rgb, 0, 123, 255), 0.1);
+  border: 1px solid rgba(var(--accent-color-rgb, 0, 123, 255), 0.3);
+}
+
+.sortDirection {
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.modalActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modalButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: none;
+  background: var(--accent-color);
+  color: white;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modalButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.modalButtonIcon {
+  font-size: 1.25rem;
+}
+
 /* Responsive design */
 @media (max-width: 1200px) {
   .listHeader {
@@ -253,24 +577,28 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 1rem;
+    padding: 0.75rem;
+    height: calc(100vh - 4em);
   }
 
   .headerContent {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    margin-bottom: 1rem;
   }
 
   .controls {
     flex-direction: column;
     align-items: stretch;
+    width: 100%;
     gap: 1rem;
   }
 
   .searchSection,
   .filterSection {
     width: 100%;
+    min-width: auto;
   }
 
   .filterSection {
@@ -280,44 +608,87 @@
 
   .filterButtons {
     width: 100%;
-    justify-content: flex-start;
+    justify-content: space-between;
   }
 
   .stats {
-    align-self: stretch;
-    justify-content: space-around;
+    display: none;
   }
 
   .title {
-    font-size: 1.5rem;
+    font-size: 1.5rem !important;
   }
 
   .accountsList {
     padding: 0.5rem;
   }
+
+  .footer {
+    padding: 0.3rem;
+  }
+
+  .mobileStatItem {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  .mobileStatValue {
+    font-size: 1.1rem;
+  }
+
+  .mobileStatLabel {
+    font-size: 0.65rem;
+  }
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+
   .searchSection {
-    min-width: auto;
+    min-width: 0;
   }
 
   .filterButtons {
-    flex-direction: column;
-    width: 100%;
+    gap: 0.3rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
   }
 
   .filterButtons button {
-    width: 100%;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .modalContent {
+    padding: 1.25rem 1rem;
+  }
+
+  .modalHeader h2 {
+    font-size: 1.1rem;
+  }
+
+  .modalFilterItem,
+  .modalSortItem,
+  .modalButton {
+    padding: 0.6rem;
+  }
+
+  .mobileStatValue {
+    font-size: 1rem;
+  }
+
+  .mobileStatLabel {
+    font-size: 0.6rem;
   }
 }
 
-/* Dark theme adjustments */
 [data-theme="dark"] .accountsList {
-  background: var(--bg-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 [data-theme="dark"] .listHeader {
   background-color: rgba(255, 255, 255, 0.05);
-  border-bottom-color: rgba(255, 255, 255, 0.1);
 }

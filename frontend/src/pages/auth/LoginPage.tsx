@@ -6,28 +6,53 @@ import { authService } from '../../services/auth/authService';
 import { useAppDispatch, useAppSelector } from '../../core/store/MainStore';
 import { setAuth, setUser } from '../../core/store/slices/authSlice';
 import { toast } from 'react-toastify';
+import { FaTelegram, FaUserAlt, FaLock, FaArrowRight, FaSun, FaMoon } from 'react-icons/fa';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 
-interface IPProps {
-
-}
-const LoginPage: FC<IPProps> = () => {
-
-  const [login, setLogin] = useState<string>()
-  const [password, setPassword] = useState<string>()
+const LoginPage: FC = () => {
+  const [login, setLogin] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [shakeError, setShakeError] = useState<boolean>(false)
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const { isAuth, user } = useAppSelector(s => s.auth)
   const dispatch = useAppDispatch()
   const [doLogin, { data, isSuccess: successLogin, isError, error }] = useLoginMutation()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams();
   const returnTo = searchParams.get('returnTo');
+  const isMobile = useMediaQuery('(max-width: 768px)');
+  
+  // Получаем предпочитаемую системную тему при загрузке
+  useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(prefersDark ? 'dark' : 'light');
+    
+    // Добавляем атрибут темы к body
+    document.body.setAttribute('data-auth-theme', prefersDark ? 'dark' : 'light');
+    
+    return () => {
+      // Удаляем атрибут при размонтировании
+      document.body.removeAttribute('data-auth-theme');
+    }
+  }, []);
+  
+  // Переключение темы
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    document.body.setAttribute('data-auth-theme', newTheme);
+  }
 
   useEffect(() => {
     if (successLogin && data) {
       authService.checkAuth(data.access_token)
         .then(success => {
           if (success) {
+            setLoading(false)
             dispatch(setAuth(true))
           } else {
+            setLoading(false)
             toast.error('Ошибка при проверке авторизации')
           }
         })
@@ -36,6 +61,9 @@ const LoginPage: FC<IPProps> = () => {
 
   useEffect(() => {
     if (isError) {
+      setLoading(false)
+      setShakeError(true)
+      setTimeout(() => setShakeError(false), 500)
       // @ts-ignore
       const errorMessage = error?.data?.message || 'Ошибка авторизации. Проверьте логин и пароль.';
       toast.error(errorMessage);
@@ -55,87 +83,117 @@ const LoginPage: FC<IPProps> = () => {
 
   const handleLogin = async () => {
     if (!login || !password) {
+      setShakeError(true)
+      setTimeout(() => setShakeError(false), 500)
       toast.warning('Введите логин и пароль');
       return;
     }
     try {
+      setLoading(true)
       doLogin({ username: login, password })
     } catch (err) {
+      setLoading(false)
       toast.error('Ошибка при попытке входа');
     }
   }
 
-  // const [verify, { isSuccess: gotToken }] = useVerifyBusinessTokenMutation()
-  // const { message } = useAppSelector(s => s.nav)
-
-  // const handleSubmit = useCallback(() => {
-  //   if (!login || !password) {
-  //     message('Для продолжения, заполните все данные');
-  //     return;
-  //   }
-  //   doLogin({ login, password });
-  // }, [login, password, doLogin]);
-  // useEffect(() => {
-  //   if (isSuccess) {
-  //     if (data) {
-  //       dispatch(setAuth(true))
-  //       dispatch(setUser(data.user))
-  //       localStorage.setItem('token', data.token)
-  //     }
-  //   }
-  //   if (isError) {
-  //     // @ts-ignore
-  //     message(error.data.message);
-  //   }
-  // }, [isSuccess, isError, data])
-
-  // useEffect(() => {
-  //   if (isAuth)
-  //     navigate('/')
-  //   if (!isAuth) {
-  //     const token = localStorage.getItem('token')
-  //     if (token)
-  //       verify({ token })
-  //   }
-  //   if (gotToken) {
-  //     navigate('/')
-  //   }
-  // }, [isAuth, gotToken])
-
-
-
-
-  return (<div onKeyDown={(e) => {
-    if (e.key === 'Enter') {
-      handleLogin();
-    }
-  }} className={css.wrapper}>
-    <div className={css.form}>
-
-      <div className={css.nd}>
-        {/* <div className={css.langPicker}>
-          <LangPicker />
-        </div> */}
-        <div className={css.title}>Зарабатывай вместе с нами</div>
-        <div className={css.icons}></div>
-        <div className={css.text}>
-          Для перехода в личный кабинет, укажите данные указанные при регистрации
+  return (
+    <div 
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          handleLogin();
+        }
+      }} 
+      className={`${css.wrapper} ${css[`theme-${theme}`]}`}
+    >
+      <button 
+        onClick={toggleTheme} 
+        className={css.themeToggle}
+        aria-label="Переключить тему"
+      >
+        {theme === 'light' ? <FaMoon /> : <FaSun />}
+      </button>
+      
+      <div className={`${css.form} ${shakeError ? css.shakeAnimation : ''}`}>
+        <div className={css.nd}>
+          <div className={css.title}>Добро пожаловать!</div>
+          <div className={css.text}>
+            Для входа в личный кабинет укажите данные, указанные при регистрации
+          </div>
+          
+          <div className={css.inputs}>
+            <div className={css.inputWrapper}>
+              <FaUserAlt className={css.inputIcon} />
+              <input 
+                onChange={e => setLogin(e.target.value)} 
+                value={login}
+                placeholder="Email или номер телефона" 
+                className={css.input} 
+              />
+            </div>
+            
+            <div className={css.inputWrapper}>
+              <FaLock className={css.inputIcon} />
+              <input 
+                type="password" 
+                onChange={e => setPassword(e.target.value)} 
+                value={password}
+                placeholder="Пароль для входа в систему" 
+                className={css.input} 
+              />
+            </div>
+          </div>
+          
+          <div className={css.forgotPassword}>
+            Забыли пароль?
+          </div>
+          
+          <button 
+            onClick={handleLogin} 
+            className={`${css.button} ${loading ? css.loading : ''}`}
+            disabled={loading}
+          >
+            {loading ? (
+              <span className={css.loadingSpinner}></span>
+            ) : (
+              <>
+                Войти в кабинет 
+                <FaArrowRight className={css.buttonIcon} />
+              </>
+            )}
+          </button>
         </div>
-        <div className={css.inputs}>
-
-          <input onChange={e => setLogin(e.target.value)} placeholder={'Email или номер телефона:'} className={css.input} />
-          <input type='password' onChange={e => setPassword(e.target.value)} placeholder={'Пароль для входа в систему'} className={css.input} />
+        
+        <div className={css.st}>
+          <div className={css.logo}>
+            <FaTelegram className={css.logoIcon} />
+          </div>
+          <div className={css.title}>
+            {isMobile ? 'Нет аккаунта?' : 'Telegram Client'}
+          </div>
+          <div className={css.text}>
+            {isMobile 
+              ? 'Создайте новую учётную запись, чтобы начать пользоваться сервисом.'
+              : 'Пройдите простую процедуру регистрации, чтобы начать пользоваться всеми возможностями нашего сервиса'}
+          </div>
+          <button onClick={() => navigate('/reg')} className={css.button}>
+            Создать аккаунт <FaArrowRight className={css.buttonIcon} />
+          </button>
         </div>
-        <div onClick={handleLogin} className={css.button}>Вход в личный кабинет</div>
       </div>
-      <div className={css.st}>
-        <div className={css.logo}></div>
-        {/* <div className={css.title}>Мы рады вашему визиту!</div> */}
-        <div className={css.text}>Пройдите простую продседуру регистрации чтобы начать пользоваться сервисом</div>
-        <div onClick={() => navigate('/reg')} className={css.button}>Создать учётную запись</div>
+      
+      <div className={css.footerCopyright}>
+        © 2023 Telegram Client. Все права защищены
+      </div>
+      
+      {/* Анимированный фоновый элемент */}
+      <div className={css.backgroundElements}>
+        <div className={css.animatedCircle}></div>
+        <div className={css.animatedCircle2}></div>
+        <div className={css.animatedCircle3}></div>
       </div>
     </div>
-  </div >)
+  )
 }
 
 export default LoginPage

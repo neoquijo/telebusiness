@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: padding 0.3s ease;
 }
 
 .header {
@@ -13,6 +14,7 @@
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .headerContent {
@@ -40,6 +42,11 @@
 .headerActions {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.headerActionsItem {
+  white-space: nowrap;
 }
 
 .statistics {
@@ -65,6 +72,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .filterIcon {
@@ -85,12 +93,15 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
 }
 
 .messageList {
   flex: 1;
   overflow-y: auto;
   padding: 1rem;
+  scroll-behavior: smooth;
 }
 
 .emptyState {
@@ -120,7 +131,7 @@
 }
 
 .paginationWrapper {
-  padding: 1rem;
+  padding: 0.75rem;
   border-top: 1px solid var(--border-color);
   background: var(--bg-secondary);
 }
@@ -156,52 +167,470 @@
   }
 }
 
-/* Responsive design */
+/* Мобильный заголовок */
+.mobileHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 5;
+}
+
+.mobileTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mobileTitle h1 {
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.mobileActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.mobileActionButton {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mobileActionButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Мобильная панель поиска */
+.mobileSearchPanel {
+  background: var(--bg-primary);
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  animation: slideDown 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Мобильная метка фильтра */
+.mobileFilterBadge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-color, #007bff);
+  color: white;
+  padding: 0.25rem 0.6rem 0.25rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+  margin-left: 0.25rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  gap: 0.35rem;
+  animation: fadeIn 0.3s;
+}
+
+.filterBadgeIcon {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Мобильная статистика */
+.mobileStatistics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0 0.25rem;
+}
+
+/* Модальное окно */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(3px);
+}
+
+.modalContent {
+  width: 100%;
+  background: var(--bg-primary);
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: 1.5rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  transform: translateY(100%);
+  animation: slideUp 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+@keyframes slideUp {
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modalHeader h2 {
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 600;
+}
+
+.modalClose {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modalClose:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.modalSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modalSection h3 {
+  font-size: 1rem;
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.modalFilters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modalFilterItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+  font-weight: 500;
+  gap: 0.75rem;
+}
+
+.modalFilterItem:hover {
+  background: var(--bg-hover);
+}
+
+.activeFilter {
+  background: rgba(var(--accent-color-rgb, 0, 123, 255), 0.1);
+  border: 1px solid rgba(var(--accent-color-rgb, 0, 123, 255), 0.3);
+}
+
+.activeFilterMark {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent-color);
+}
+
+.modalFilterIcon {
+  font-size: 1.25rem;
+  color: var(--icon-primary);
+}
+
+.modalSortButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.modalSortButton:hover {
+  background: var(--bg-hover);
+}
+
+.modalOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modalOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modalOption:hover {
+  background: var(--bg-hover);
+}
+
+.modalOptionText {
+  display: flex;
+  flex-direction: column;
+}
+
+.modalOptionTitle {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.modalOptionDescription {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.modalToggle {
+  width: 3rem;
+  height: 1.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 1rem;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.modalToggleActive {
+  background: var(--accent-color);
+}
+
+.modalToggleHandle {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  width: 1rem;
+  height: 1rem;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.modalToggleActive .modalToggleHandle {
+  left: 1.75rem;
+}
+
+.modalButton {
+  padding: 0.75rem;
+  border: none;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  color: var(--text-color);
+}
+
+.modalButton:hover {
+  background: var(--bg-hover);
+}
+
+/* Улучшенный адаптивный дизайн с фокусом на сообщениях */
 @media (max-width: 768px) {
   .container {
+    padding: 0.75rem;
+    height: calc(100vh - 4em);
+  }
+
+  .header {
     padding: 1rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.75rem;
   }
 
   .headerContent {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .title {
+    font-size: 1.5rem !important;
+  }
+
+  .titleIcon {
+    font-size: 1.5rem;
+  }
+
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .statistics {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
   }
 
   .controls {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .searchSection {
+    width: 100%;
+    min-width: auto;
   }
 
   .filterSection {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
+    width: 100%;
   }
 
-  .title {
-    font-size: 1.5rem;
+  .filterButtons {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   .messageList {
+    padding: 0.75rem;
+  }
+
+  .content {
+    border-radius: 0.75rem;
+    margin-top: auto;
+    flex: 1;
+  }
+
+  .refreshButton {
+    align-self: center;
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+  
+  .paginationWrapper {
     padding: 0.5rem;
   }
 }
 
 @media (max-width: 480px) {
-  .filterButtons {
-    justify-content: center;
+  .container {
+    padding: 0.5rem;
   }
 
-  .searchSection {
-    min-width: auto;
+  .header {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
   }
 
-  .statistics {
-    gap: 0.75rem;
+  .headerActions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .headerActionsItem {
+    width: 100%;
+    margin-bottom: 0.25rem;
+  }
+
+  .title {
+    font-size: 1.25rem !important;
+  }
+
+  .titleIcon {
+    font-size: 1.25rem;
+  }
+
+  .emptyIcon {
+    font-size: 3rem;
+  }
+
+  .content {
+    border-radius: 0.5rem;
+  }
+  
+  .messageList {
+    padding: 0.5rem;
+  }
+
+  .controls {
+    gap: 0.5rem;
+  }
+  
+  .mobileStatistics {
+    gap: 0.3rem;
+    padding: 0;
+  }
+  
+  .paginationWrapper {
+    padding: 0.4rem;
   }
 }

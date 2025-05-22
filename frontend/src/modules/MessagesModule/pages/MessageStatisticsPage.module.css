@@ -41,6 +41,8 @@
 .dateFilters {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .dateGroup {
@@ -199,14 +201,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 15px 20px;
-
   border-radius: 8px;
   margin-bottom: 15px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-
-
 
 .overviewHeader h3 {
   margin: 0;
@@ -219,4 +218,110 @@
   width: 20px;
   height: 20px;
   color: #666;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 0.75rem;
+    height: calc(100vh - 4em);
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .headerActions {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .filterSection {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .dateFilters {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .dateGroup {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .overviewCards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .cardIcon {
+    width: 50px;
+    height: 50px;
+    font-size: 2rem;
+  }
+
+  .cardValue {
+    font-size: 1.5rem;
+  }
+
+  .chartsSection {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .chartCard {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .wrapper {
+    padding: 0.5rem;
+  }
+
+  .title {
+    font-size: 1.4em !important;
+  }
+
+  .titleIcon {
+    font-size: 1.4em;
+  }
+
+  .headerActions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filterSection {
+    padding: 0.75rem;
+  }
+
+  .card {
+    padding: 0.75rem;
+  }
+
+  .cardIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+  }
+
+  .cardValue {
+    font-size: 1.25rem;
+  }
+
+  .overviewHeader h3 {
+    font-size: 1rem;
+  }
 }
