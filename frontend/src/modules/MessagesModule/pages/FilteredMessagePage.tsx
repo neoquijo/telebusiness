@@ -17,23 +17,30 @@ import MessageItem from '../components/MessagesItem';
 const FilteredMessagesPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilterId, setSelectedFilterId] = useState<string | null>(null);
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const { Pagination, page, limit } = usePagination(1, 20);
 
-  // Формирование queryParams в нужном формате
   const queryParams = new URLSearchParams({
     searchQuery,
     page: page.toString(),
     limit: limit.toString(),
     orderBy: 'createdAt',
     order,
-    type: selectedFilterId ?? ''
+    filters: selectedFilters.join(',')
   }).toString();
 
   const { data: messages, isLoading: messagesLoading, refetch } = useGetFilteredMessagesQuery(queryParams);
   // const { data: statistics } = useGetMessageStatisticsQuery('');
   const { data: filtersData } = useGetFiltersQuery('');
+
+  const handleFilterToggle = (filterId: string) => {
+    setSelectedFilters(prev => 
+      prev.includes(filterId)
+        ? prev.filter(id => id !== filterId)
+        : [...prev, filterId]
+    );
+  };
 
   if (messagesLoading) {
     return (
@@ -102,19 +109,19 @@ const FilteredMessagesPage: React.FC = () => {
           </div>
 
           <div className={css.filterSection}>
-            <label className={css.filterLabel}>Фильтр:</label>
-            <select
-              value={selectedFilterId || ''}
-              onChange={(e) => setSelectedFilterId(e.target.value || null)}
-              className={css.filterSelect}
-            >
-              <option value="">Все фильтры</option>
+            <label className={css.filterLabel}>Фильтры:</label>
+            <div className={css.filterCheckboxes}>
               {filtersData?.items.map(filter => (
-                <option key={filter.id} value={filter.id}>
-                  {filter.name}
-                </option>
+                <label key={filter.id} className={css.filterCheckbox}>
+                  <input
+                    type="checkbox"
+                    checked={selectedFilters.includes(filter.id)}
+                    onChange={() => handleFilterToggle(filter.id)}
+                  />
+                  <span>{filter.name}</span>
+                </label>
               ))}
-            </select>
+            </div>
           </div>
 
           <Button onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}>
@@ -147,7 +154,7 @@ const FilteredMessagesPage: React.FC = () => {
               <MdFilterList className={css.emptyIcon} />
               <h3>Отфильтрованные сообщения не найдены</h3>
               <p>
-                {selectedFilterId || searchQuery
+                {selectedFilters.length > 0 || searchQuery
                   ? 'Попробуйте изменить фильтры или поисковый запрос'
                   : 'Пока нет сообщений, соответствующих заданным фильтрам'}
               </p>

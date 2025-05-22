@@ -42,6 +42,7 @@ export class MessagesController {
     @queryFilter() filters: ReqFilters,
     @CurrentUser() user: User
   ) {
+    console.log(filters)
     return await this.messagesService.getMessagesStatistics(filters, user);
   }
 

@@ -9,6 +9,7 @@ import usePagination from '../../../shared/components/Navigation/Pagination/useP
 import css from './MessagesPage.module.css';
 import MessageItem from '../components/MessagesItem';
 import StatisticsCard from './StatisticsCard';
+import { IoBarChart } from 'react-icons/io5';
 
 const MessagesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const MessagesPage: React.FC = () => {
   const [sourceType, setSourceType] = useState<string | null>(null);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
   const { Pagination, page, limit } = usePagination(1, 20);
+  const [isOverviewVisible, setIsOverviewVisible] = useState(false);
 
   const queryParams = new URLSearchParams({
     searchQuery,
@@ -46,6 +48,12 @@ const MessagesPage: React.FC = () => {
             Сообщения
           </h1>
           <div className={css.headerActions}>
+            <Button icon={IoBarChart} variant='ghost' onClick={()=>setIsOverviewVisible(!isOverviewVisible)} className={css.headerActionsItem}>
+              {isOverviewVisible ? 'Скрыть статистику' : 'Показать статистику'}
+            </Button>
+            <Button icon={IoBarChart} variant='ghost' onClick={()=>navigate('/messages/statistics')}>
+              Перейти к детальной статистике
+            </Button>
             <Button
               variant="primary"
               icon={FaFilter}
@@ -56,7 +64,7 @@ const MessagesPage: React.FC = () => {
           </div>
         </div>
 
-        {statistics && (
+        {statistics && isOverviewVisible && (
           <div className={css.statistics}>
             <StatisticsCard
               title="Всего сообщений"

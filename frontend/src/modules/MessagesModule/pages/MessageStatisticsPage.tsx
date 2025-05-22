@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import css from './MessageStatisticsPage.module.css';
 import { useGetMessageStatisticsQuery } from '../../../API/messagesApi';
-import { FaChartBar, FaArrowLeft, FaCalendarAlt } from 'react-icons/fa';
+import { FaChartBar, FaArrowLeft, FaCalendarAlt, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import Button from '../../../shared/components/UI/Button/Button';
 import { useNavigate } from 'react-router-dom';
 import Input from '../../../shared/components/UI/Input/Input';
@@ -12,10 +12,21 @@ const MessageStatisticsPage: FC<IProps> = () => {
   const navigate = useNavigate();
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [isOverviewVisible, setIsOverviewVisible] = useState(true);
 
   const queryParams = new URLSearchParams();
-  if (startDate) queryParams.append('startDate', startDate);
-  if (endDate) queryParams.append('endDate', endDate);
+  if (startDate) {
+    const fromDate = new Date(`${startDate}T00:00:00`); // Начало дня в UTC
+    const fromTimestamp = Math.floor(fromDate.getTime() / 1000); // Конвертация в секунды
+    queryParams.append('from', fromTimestamp.toString());
+  }
+  
+  // Преобразование endDate в Unix timestamp
+  if (endDate) {
+    const toDate = new Date(`${endDate}T23:59:59`); // Конец дня в UTC
+    const toTimestamp = Math.floor(toDate.getTime() / 1000); // Конвертация в секунды
+    queryParams.append('to', toTimestamp.toString());
+  }
 
   const { data: statistics, isFetching, refetch } = useGetMessageStatisticsQuery(queryParams.toString());
 
@@ -72,31 +83,38 @@ const MessageStatisticsPage: FC<IProps> = () => {
         <div className={css.loading}>Загрузка статистики...</div>
       ) : (
         <div className={css.content}>
-          <div className={css.overviewCards}>
-            <div className={css.card}>
-              <div className={css.cardIcon}>📊</div>
-              <div className={css.cardContent}>
-                <div className={css.cardValue}>{statistics?.totalMessages || 0}</div>
-                <div className={css.cardLabel}>Всего сообщений</div>
-              </div>
-            </div>
-
-            <div className={css.card}>
-              <div className={css.cardIcon}>🔍</div>
-              <div className={css.cardContent}>
-                <div className={css.cardValue}>{statistics?.filteredMessages || 0}</div>
-                <div className={css.cardLabel}>Отфильтрованных</div>
-              </div>
-            </div>
-
-            <div className={css.card}>
-              <div className={css.cardIcon}>📈</div>
-              <div className={css.cardContent}>
-                <div className={css.cardValue}>{statistics?.filteredPercentage || 0}%</div>
-                <div className={css.cardLabel}>Процент фильтрации</div>
-              </div>
-            </div>
+          <div className={css.overviewHeader} onClick={() => setIsOverviewVisible(!isOverviewVisible)}>
+            <h3>Свод данных</h3>
+            {isOverviewVisible ? <FaChevronUp /> : <FaChevronDown />}
           </div>
+          
+          {isOverviewVisible && (
+            <div className={css.overviewCards}>
+              <div className={css.card}>
+                <div className={css.cardIcon}>📊</div>
+                <div className={css.cardContent}>
+                  <div className={css.cardValue}>{statistics?.totalMessages || 0}</div>
+                  <div className={css.cardLabel}>Всего сообщений</div>
+                </div>
+              </div>
+
+              <div className={css.card}>
+                <div className={css.cardIcon}>🔍</div>
+                <div className={css.cardContent}>
+                  <div className={css.cardValue}>{statistics?.filteredMessages || 0}</div>
+                  <div className={css.cardLabel}>Отфильтрованных</div>
+                </div>
+              </div>
+
+              <div className={css.card}>
+                <div className={css.cardIcon}>📈</div>
+                <div className={css.cardContent}>
+                  <div className={css.cardValue}>{statistics?.filteredPercentage || 0}%</div>
+                  <div className={css.cardLabel}>Процент фильтрации</div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className={css.chartsSection}>
             <div className={css.chartCard}>

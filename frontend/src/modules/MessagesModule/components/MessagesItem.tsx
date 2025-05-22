@@ -4,12 +4,13 @@ import { MdMessage } from 'react-icons/md';
 import { FaUser, FaBroadcastTower, FaFilter, FaClock } from 'react-icons/fa';
 import { TelegramMessage } from '../../../API/messagesApi';
 import css from './MessageItem.module.css';
+import { useModalManager } from '../../../core/providers/modal/ModalProvider';
+import { MessageDetailsModal } from './MessageDetailsModal';
 
 interface MessageItemProps {
   message: TelegramMessage;
   index: number;
   searchQuery?: string;
-  onClick: () => void;
 }
 
 const highlightText = (text: string, query: string) => {
@@ -29,9 +30,17 @@ const highlightText = (text: string, query: string) => {
 const MessageItem: React.FC<MessageItemProps> = ({
   message,
   index,
-  searchQuery = '',
-  onClick
+  searchQuery = ''
 }) => {
+  const { openModal } = useModalManager();
+
+  const handleClick = () => {
+    openModal('messageDetails', <MessageDetailsModal message={message} />, {
+      title: 'Детали сообщения',
+      icon: MdMessage
+    });
+  };
+
   const getSourceInfo = () => {
     switch (message.sourceType) {
       case 'Private':
@@ -67,7 +76,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
   return (
     <div
       className={`${css.item} ${index % 2 === 0 ? css.even : css.odd}`}
-      onClick={onClick}
+      onClick={handleClick}
     >
       <div className={css.main}>
         <div className={css.content}>

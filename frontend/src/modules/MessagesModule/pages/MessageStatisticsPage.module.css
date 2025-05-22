@@ -193,3 +193,32 @@
   padding: 2rem;
   font-style: italic;
 }
+
+.overviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+
+  border-radius: 8px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.overviewHeader:hover {
+  /* background-color: #e8e8e8; */
+}
+
+.overviewHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.overviewHeader svg {
+  width: 20px;
+  height: 20px;
+  color: #666;
+}

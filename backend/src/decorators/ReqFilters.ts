@@ -1,40 +1,43 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export const queryFilter = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext): ReqFilters => {
-    const request = ctx.switchToHttp().getRequest();
-    const searchQuery = String(request.query.searchQuery)
-    const from = parseInt(request.query.from, 10);
-    const to = parseInt(request.query.to, 10);
-    const role = String(request.query.role);
-    const limit = parseInt(request.query.limit, 10) || 10;
-    const skip = parseInt(request.query.skip, 10) || 0;
-    const status = request.query.status ? String(request.query.status) : undefined;
-    const page = parseInt(request.query.page, 10);
-    const order = request.query.order === 'asc' || request.query.order === 'desc' ? request.query.order : undefined;
-    const orderBy = request.query.orderBy ? String(request.query.orderBy) : undefined;
-    const periodOption = request.query.periodOption ? String(request.query.periodOption) : 'createdAt'; // Добавлено
-    const type = request.query.type
-    return { from, to, limit, skip, status, page, order, orderBy, periodOption, searchQuery, role, type };
-  },
-);
-
 export interface ReqFilters {
-  type?: any;
   limit?: number;
   page?: number;
-  skip?: number;
   from?: number;
   to?: number;
+  periodOption?: string;
   status?: string;
   order?: 'asc' | 'desc';
   orderBy?: string;
-  periodOption?: string;
-  role?: string;
   searchQuery?: string;
   startDate?: string;
   endDate?: string;
+  filters?: string;
+  type?: 'Channel' | 'Group' | 'User';
 }
+
+export const queryFilter = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext): ReqFilters => {
+    const request = ctx.switchToHttp().getRequest();
+    const query = request.query;
+
+    return {
+      limit: query.limit ? parseInt(query.limit) : undefined,
+      page: query.page ? parseInt(query.page) : undefined,
+      from: query.from ? parseInt(query.from) : undefined,
+      to: query.to ? parseInt(query.to) : undefined,
+      periodOption: query.periodOption,
+      status: query.status,
+      order: query.order as 'asc' | 'desc',
+      orderBy: query.orderBy,
+      searchQuery: query.searchQuery,
+      startDate: query.startDate,
+      endDate: query.endDate,
+      filters: query.filters,
+      type: query.type as 'Channel' | 'Group' | 'User'
+    };
+  },
+);
 
 export interface DialogFilters {
   limit?: number;

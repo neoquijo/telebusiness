@@ -36,13 +36,19 @@ export class MessagesService {
 
   async getFilteredMessages(filters: ReqFilters, user: User) {
     try {
-      const query = {
+      const query: any = {
         user: user._id,
         filtered: { $exists: true, $ne: [] }
       };
 
       if (filters.searchQuery) {
         query['messageText'] = { "$regex": filters.searchQuery, "$options": "i" };
+      }
+
+      // Обработка множественных фильтров
+      if (filters.filters && filters.filters.length > 0) {
+        const filterIds = filters.filters.split(',').map(id => new Types.ObjectId(id));
+        query.filtered = { $in: filterIds };
       }
 
       return await filteredRequest(
@@ -103,36 +109,57 @@ export class MessagesService {
 
   async getMessagesStatistics(filters: ReqFilters, user: User) {
     try {
-      const baseQuery = { user: user._id };
-
-      if (filters.startDate && filters.endDate) {
-        baseQuery['createdAt'] = {
-          $gte: new Date(filters.startDate).getTime(),
-          $lte: new Date(filters.endDate).getTime()
-        };
+      const baseQuery: any = { user: user._id };
+  
+      // Обрабатываем временные метки Unix (в секундах)
+      if (filters.from || filters.to) {
+        const query: any = {};
+        
+        if (filters.from) {
+          query.$gte = filters.from * 1000;
+        }
+        
+        if (filters.to) {
+          query.$lte = filters.to * 1000;
+        }
+        
+        baseQuery.createdAt = query;
       }
-
-      const totalMessages = await this.messageModel.countDocuments(baseQuery);
-
-      const filteredMessages = await this.messageModel.countDocuments({
-        ...baseQuery,
-        filtered: { $exists: true, $ne: [] }
-      });
-
+  
+      // Параллельно выполняем основные запросы
+      const [totalMessages, filteredMessages] = await Promise.all([
+        this.messageModel.countDocuments(baseQuery),
+        this.messageModel.countDocuments({
+          ...baseQuery,
+          filtered: { $exists: true, $ne: [] }
+        })
+      ]);
+  
+      // Статистика по фильтрам с учетом периода
       const filterStats = await this.messageModel.aggregate([
         { $match: baseQuery },
-        { $unwind: '$filtered' },
+        { $unwind: { path: '$filtered', preserveNullAndEmptyArrays: false } },
+        {
+          $lookup: {
+            from: 'messagefilters',
+            localField: 'filtered',
+            foreignField: '_id',
+            as: 'filterInfo'
+          }
+        },
+        { $unwind: '$filterInfo' },
         {
           $group: {
             _id: '$filtered',
             count: { $sum: 1 },
-            filterName: { $first: '$filterNames' }
+            filterName: { $first: '$filterInfo.name' }
           }
         },
         { $sort: { count: -1 } },
         { $limit: 10 }
       ]);
-
+  
+      // Статистика по аккаунтам с учетом периода
       const accountStats = await this.messageModel.aggregate([
         { $match: baseQuery },
         {
@@ -144,16 +171,18 @@ export class MessagesService {
         { $sort: { count: -1 } },
         { $limit: 10 }
       ]);
-
+  
       return {
         totalMessages,
         filteredMessages,
-        filteredPercentage: totalMessages > 0 ? (filteredMessages / totalMessages * 100).toFixed(2) : 0,
+        filteredPercentage: totalMessages > 0 
+          ? Number((filteredMessages / totalMessages * 100).toFixed(2)) 
+          : 0,
         topFilters: filterStats,
         topAccounts: accountStats
       };
     } catch (error) {
-      throw new BadRequestException('Failed to get messages statistics');
+      throw new BadRequestException('Ошибка получения статистики: ' + error.message);
     }
   }
 
