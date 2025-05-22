@@ -273,6 +273,7 @@ export class ParserService implements OnModuleInit, OnModuleDestroy {
 
       accountChangeStream.on("change", async (change) => {
         try {
+          console.log('changed')
           if (change.operationType === "update") {
             const accountId = change.documentKey._id;
             const account = await this.accountModel.findById(accountId);

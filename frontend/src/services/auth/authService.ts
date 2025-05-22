@@ -3,6 +3,10 @@ import { mainStore } from "../../core/store/MainStore";
 import { authSlice } from "../../core/store/slices/authSlice"
 import { toast } from "react-toastify";
 
+// Дебаунс переменные для снижения нагрузки
+let lastAuthCheck = 0;
+let cachedResult: boolean | null = null;
+
 export class AuthService {
   // private token: string | undefined | null;
   // constructor() {
@@ -48,42 +52,53 @@ export class AuthService {
         mainStore.dispatch(authSlice.actions.setUser(undefined))
         return false
       }
-      
-      this.setToken(token)
-      const apiCall = authApi.endpoints.checkAuth.initiate(token);
-      const result = await mainStore.dispatch(apiCall);
-      const { isError, data: response, error } = result;
 
-      if (isError) {
+      // Дебаунс проверки - не чаще чем раз в 10 секунд
+      const now = Date.now();
+      if (now - lastAuthCheck < 10000 && cachedResult !== null) {
+        return cachedResult;
+      }
+      
+      this.setToken(token);
+      lastAuthCheck = now;
+      
+      // Использование стандартного initiate без лишних параметров
+      const result = await mainStore.dispatch(authApi.endpoints.checkAuth.initiate(token));
+      
+      if ('error' in result) {
         mainStore.dispatch(authSlice.actions.setAuth(false))
         mainStore.dispatch(authSlice.actions.setUser(undefined))
         this.removeToken()
-        // @ts-ignore
-        const errorMessage = error?.data?.message || 'Ошибка проверки авторизации'
-        toast.error(errorMessage)
-        return false
-      } else {
+        
+        // Запоминаем результат для дебаунса
+        cachedResult = false;
+        return false;
+      } else if (result.data) {
         // Проверяем, что ответ содержит данные пользователя
-        if (response) {
-          console.log("User data received:", response);
-          mainStore.dispatch(authSlice.actions.setUser(response))
-          mainStore.dispatch(authSlice.actions.setAuth(true))
-          return true
-        } else {
-          mainStore.dispatch(authSlice.actions.setAuth(false))
-          mainStore.dispatch(authSlice.actions.setUser(undefined))
-          this.removeToken()
-          toast.error('Ошибка получения данных пользователя')
-          return false
-        }
+        mainStore.dispatch(authSlice.actions.setUser(result.data))
+        mainStore.dispatch(authSlice.actions.setAuth(true))
+        
+        // Запоминаем результат для дебаунса
+        cachedResult = true;
+        return true;
+      } else {
+        mainStore.dispatch(authSlice.actions.setAuth(false))
+        mainStore.dispatch(authSlice.actions.setUser(undefined))
+        this.removeToken()
+        
+        // Запоминаем результат для дебаунса
+        cachedResult = false;
+        return false;
       }
     } catch (error) {
       console.error('Authentication error:', error)
       mainStore.dispatch(authSlice.actions.setAuth(false))
       mainStore.dispatch(authSlice.actions.setUser(undefined))
       this.removeToken()
-      toast.error('Непредвиденная ошибка авторизации')
-      return false
+      
+      // Запоминаем результат для дебаунса
+      cachedResult = false;
+      return false;
     }
   }
 
@@ -103,6 +118,7 @@ export class AuthService {
     
     console.log(`User: ${user.login}, Role: ${user.role}, isAdmin: ${isAdmin}, hasAllowedRole: ${hasAllowedRole}`);
     
+    // Админ всегда имеет доступ + проверка на наличие разрешенной роли
     return isAdmin || hasAllowedRole;
   }
 }

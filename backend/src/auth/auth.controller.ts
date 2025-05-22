@@ -15,6 +15,7 @@ export class AuthController {
 
   @Post('/me')
   getMe(@Headers() headers) {
+    console.log(headers)
     return this.auth.checkAuth(headers.authorization)
   }
 

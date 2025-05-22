@@ -178,7 +178,7 @@ export class AccountsStorage implements OnModuleInit, OnModuleDestroy {
           await this.removeClient(accountId);
         }
       }
-    }, 90000); // Проверка каждые 90 секунд
+    }, 5000); // Проверка каждые 90 секунд
   }
 
   private async handleInvalidSession(accountId: string) {
