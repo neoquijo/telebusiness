@@ -16,7 +16,7 @@ import { useModalBodyScroll } from '../../../hooks/useModalBodyScroll';
 const FiltersPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc');
   const { Pagination, page, limit } = usePagination(1, 20);
   const [deleteFilter] = useDeleteFilterMutation();
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -113,15 +113,12 @@ const FiltersPage: React.FC = () => {
             </div>
             
             <div className={`${css.modalSection} modalSection`}>
-              <h3>Сортировка</h3>
+              <h3>Порядок сортировки</h3>
               <div 
-                className={`${css.modalSortOption} modalSortOption`} 
+                className={`${css.modalSortButton} modalSortButton`}
                 onClick={() => setOrder(order === 'asc' ? 'desc' : 'asc')}
               >
-                <span>Порядок сортировки</span>
-                <div className={css.sortDirection}>
-                  {order === 'asc' ? 'По возрастанию ↑' : 'По убыванию ↓'}
-                </div>
+                {order === 'asc' ? 'По возрастанию ↑' : 'По убыванию ↓'}
               </div>
               
               <h3>Действия</h3>
@@ -134,7 +131,7 @@ const FiltersPage: React.FC = () => {
                   }}
                 >
                   <BsPlus className={`${css.modalButtonIcon} modalButtonIcon`} />
-                  Создать фильтр
+                  Создать новый фильтр
                 </button>
                 
                 <button
@@ -208,15 +205,7 @@ const FiltersPage: React.FC = () => {
       {isMobile ? mobileHeader : desktopHeader}
 
       <div className={css.content}>
-        {/* Мобильная статистика */}
-        {isMobile && (
-          <div className={css.mobileStats}>
-            <div className={css.mobileStatItem}>
-              <span className={css.mobileStatValue}>{data?.totalItems || 0}</span>
-              <span className={css.mobileStatLabel}>Всего фильтров</span>
-            </div>
-          </div>
-        )}
+
 
         <div className={css.filterList}>
           {isFetching ? (
