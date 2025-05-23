@@ -11,6 +11,7 @@ import { generateSecureUniqueID } from "src/utils/secureId";
 import { AccountsStorage } from "./accounts.storage";
 import { Dialog } from "telegram/tl/custom/dialog";
 import { getEntityType, getTypedEntity, NormalizedDialog, normalizeDialog } from "src/utils/chatEntity";
+import { BaseTelegramClient } from "src/Base/BaseClient";
 
 @Injectable()
 export class AccountsService {
@@ -86,41 +87,59 @@ export class AccountsService {
     }
   }
 
+  async updateAccountSession(accountId: string, session: string, accountName?: string) {
+    try {
+      // Проверяем существование аккаунта
+      const existingAccount = await this.accountModel.findOne({ id: accountId });
+      if (!existingAccount) {
+        throw new NotFoundException(`Account with ID ${accountId} not found`);
+      }
 
+      // Создаем клиент для проверки валидности новой сессии
+      const client = new TelegramClient(
+        new StringSession(session),
+        Number(process.env.API_ID),
+        process.env.API_HASH, {}
+      );
 
+      await client.connect();
+      
+      // Проверяем валидность сессии, получая информацию о пользователе
+      const accountInfo = await client.getMe();
+      
+      // Обновляем аккаунт
+      const updateData: any = {
+        sessionData: session,
+        status: 'alive', // Сбрасываем статус ошибки
+        username: accountInfo.username,
+        firstname: accountInfo.firstName,
+        lastname: accountInfo.lastName
+      };
 
-  // async onModuleInit() {
-  //   this.client = new TelegramClient(new StringSession("1BAAOMTQ5LjE1NC4xNjcuOTEAUJLG3zsBM0VU++N1TsN5lmpbI6pZwnBiNrATWkkj24oTRWEa5Th1a+ENXiAuKYsCJMfo5KEzTeV8PSNjbCzWFo6v58+lM00zhdep7994JE4ab8NZpnJ71B+Oy84cYJZJKtZ92BuqueV3mjNLtrkOMCdlQzZK579wwbqTsa/HMwwwrAM2vdKf+XkUa+KWRVPMDhEdPisL6+N1TYvyypjiIHmbIFxpJclur3fqK3igIkQiOxTv1d/Y2Dmv9wj2Y5k2nuyPtsuoKl6eZgDbG2hyPZKgaJiICorw3wvFamoEI77i5Z8iTghm5nJ5xKTZYdv1vCL+awg2fOFrGcGbVvCdBuI="), this.ApiConfig.apiId, this.ApiConfig.apiHash, {
-  //     connectionRetries: 5,
-  //   });
+      // Если передано новое имя аккаунта, обновляем его тоже
+      if (accountName) {
+        updateData.name = accountName;
+      }
 
-  //   await this.client.connect();
-  //   console.log('Telegram client started');
+      const updatedAccount = await this.accountModel.findOneAndUpdate(
+        { id: accountId },
+        updateData,
+        { new: true }
+      );
 
-  //   const me = await this.client.getMe();
-  //   console.log('Logged in as:', me?.username || me?.firstName);
-  //   console.log('Phone number (if available):', me?.phone || 'Not available');
+      // Обновляем клиент в хранилище
+      await this.storage.removeClient(accountId);
+      await this.storage.addClient(accountId, session);
 
-  //   this.client.addEventHandler(this.onNewMessage.bind(this), new NewMessage({}));
-
-  //   console.log('Listening for new messages...');
-  // }
-
-  // private async onNewMessage(event) {
-  //   const messageText = event.message.message;
-  //   const sender = await event.message.getSender();
-  //   const senderName = sender?.firstName || 'Unknown';
-
-  //   console.log(`[${senderName}]: ${messageText}`);
-  // }
-
-
-
-
-
-
-
-
+      return { 
+        success: true, 
+        account: updatedAccount 
+      };
+    } catch (error) {
+      console.error('Error updating account session:', error);
+      throw new BadRequestException(`Failed to update account session: ${error.message}`);
+    }
+  }
 
   async sendCode(phone: string) {
     try {

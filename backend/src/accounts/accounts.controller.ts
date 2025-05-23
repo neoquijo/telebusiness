@@ -42,15 +42,21 @@ export class AccountController {
     return this.accountsService.createAccount(data.accountName, data.session, user)
   }
 
+  @Post('/update-session')
+  async updateAccountSession(@Body() data: { id: string, session: string, accountName?: string }) {
+    return this.accountsService.updateAccountSession(data.id, data.session, data.accountName)
+  }
+
   @Post('/sendCode')
-  async sendCode(@Body() data: { phone: string }) {
-    const exist = await this.accountsService.findByPhoneNumber(data.phone)
-    if (exist)
-      throw new HttpException('ACCOUNT_ALREADY_EXIST', HttpStatus.CONFLICT)
-    else {
-      const response = await this.accountsService.sendCode(data.phone)
-      return response
+  async sendCode(@Body() data: { phone: string, relogin?: boolean }) {
+    if (!data.relogin) {
+      const exist = await this.accountsService.findByPhoneNumber(data.phone)
+      if (exist)
+        throw new HttpException('ACCOUNT_ALREADY_EXIST', HttpStatus.CONFLICT)
     }
+    
+    const response = await this.accountsService.sendCode(data.phone)
+    return response
   }
 
   @Post('/delete')

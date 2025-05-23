@@ -2,8 +2,6 @@
   display: flex;
   width: 100vw;
   height: 100vh;
-
-
 }
 
 .container {
@@ -11,6 +9,7 @@
   flex-direction: column;
   /* Размещаем элементы по вертикали */
   flex: 1;
+  overflow: hidden;
 }
 
 .topbar {
@@ -18,6 +17,7 @@
   /* Фиксированная высота */
   flex-shrink: 0;
   /* Не даём Topbar изменять размер */
+  z-index: 10;
 }
 
 .component {
@@ -28,4 +28,81 @@
   box-sizing: border-box;
   /* Учитываем padding */
   padding: 0 1em;
+  position: relative;
+  z-index: 1;
+}
+
+/* Стили для мобильного меню */
+.mobileMenuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: background-color 0.5s ease, opacity 0.5s ease, visibility 0s linear 0.5s;
+  display: flex;
+  backdrop-filter: blur(0px);
+}
+
+.mobileMenuVisible {
+  background-color: rgba(0, 0, 0, 0.75);
+  opacity: 1;
+  visibility: visible;
+  transition: background-color 0.5s ease, opacity 0.5s ease, visibility 0s;
+  backdrop-filter: blur(3px);
+}
+
+.mobileMenu {
+  background-color: var(--background-color);
+  height: 100%;
+  width: 85%;
+  max-width: 320px;
+  transform: translateX(-100%);
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.mobileMenuVisible .mobileMenu {
+  transform: translateX(0);
+}
+
+/* Добавляем эффект для активных страниц */
+@keyframes menuItemAppear {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  .component {
+    padding: 0.5em;
+    margin-top: 0.5em;
+  }
+  
+  .topbar {
+    height: 4em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    height: 3.5em;
+  }
+  
+  .component {
+    padding: 0.25em;
+  }
 }

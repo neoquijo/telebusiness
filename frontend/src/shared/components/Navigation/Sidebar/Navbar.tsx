@@ -1,21 +1,27 @@
 import React, { FC, useState, useEffect } from 'react';
 import css from './Navbar.module.css';
 import { ModuleRegistry } from '../../../../core/Registry';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { IoMdExit } from 'react-icons/io';
 import { authService } from '../../../../services/auth/authService';
 import { useAppSelector } from '../../../../core/store/MainStore';
+import { useMediaQuery } from '../../../../hooks/useMediaQuery';
+import { FaTimes } from 'react-icons/fa';
 
 // Избегаем частой проверки токена - делаем это только при монтировании компонента
 let navbarMounted = false;
 
-interface IProps { }
+interface IProps { 
+  onClose?: () => void;
+}
 
-const Sidebar: FC<IProps> = () => {
+const Sidebar: FC<IProps> = ({ onClose }) => {
   const routes = ModuleRegistry.getInstance().getAllRoutes()
   const [title, setTitle] = useState('')
   const navigate = useNavigate()
+  const location = useLocation()
   const { user, isAuth } = useAppSelector(s => s.auth)
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   // Проверяем токен только ОДИН раз при монтировании компонента
   useEffect(() => {
@@ -63,30 +69,86 @@ const Sidebar: FC<IProps> = () => {
     }
   };
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    if (isMobile && onClose) {
+      onClose();
+    }
+  };
+
+  // Проверяем наличие аватара у пользователя
+  const hasAvatar = user && 'avatar' in user && user.avatar;
+  const userInitial = user?.email ? user.email[0].toUpperCase() : 'U';
+
   return (
-    <div onMouseOut={() => setTitle('')} className={css.wrapper}>
+    <div onMouseOut={() => !isMobile && setTitle('')} className={css.wrapper}>
+      {isMobile && (
+        <div className={css.mobileHeader}>
+          <div className={css.mobileUserInfo}>
+            {hasAvatar ? (
+              <img src={String(hasAvatar)} alt="Avatar" className={css.mobileAvatar} />
+            ) : (
+              <div className={css.mobileAvatarPlaceholder}>
+                {userInitial}
+              </div>
+            )}
+            <div className={css.mobileUserDetails}>
+              <div className={css.mobileUserEmail}>{user?.email}</div>
+              <div className={css.mobileUserRole}>{user?.role || 'Пользователь'}</div>
+            </div>
+          </div>
+          {onClose && (
+            <button className={css.closeButton} onClick={onClose}>
+              <FaTimes />
+            </button>
+          )}
+        </div>
+      )}
+      
       <div className={css.st}>
         <div className={css.links}>
-          {filteredRoutes.map(el => {
-            return <div 
-              key={el.path}
-              onMouseOver={() => setTitle(el.title)} 
-              className={css.link} 
-              onClick={() => navigate(el.path)}
-            >
-              {React.createElement(el.icon!, { className: css.icon })}
-            </div>
+          {filteredRoutes.map((el, index) => {
+            const isActive = location.pathname === el.path || 
+                            (el.path !== '/' && location.pathname.startsWith(el.path));
+            const delay = isMobile ? (index + 1) * 50 : 0;
+            
+            return (
+              <div 
+                key={el.path}
+                onMouseOver={() => !isMobile && setTitle(el.title)} 
+                className={`${css.link} ${isActive ? css.activeLink : ''}`}
+                onClick={() => handleNavigation(el.path)}
+                style={isMobile ? { animationDelay: `${delay}ms` } : {}}
+              >
+                {React.createElement(el.icon!, { 
+                  className: `${css.icon} ${isActive ? css.activeIcon : ''}` 
+                })}
+                {isMobile && (
+                  <span className={css.linkText}>
+                    {el.title}
+                  </span>
+                )}
+                {isActive && <div className={css.activeMark} />}
+              </div>
+            );
           })}
         </div>
       </div>
 
       <div className={css.nd}>
-        <div className={css.sectionTitle}>
-          {title}
-        </div>
+        {!isMobile && (
+          <div className={css.sectionTitle}>
+            {title}
+          </div>
+        )}
         
-        <div onClick={handleLogout} className={css.link}>
+        <div 
+          onClick={handleLogout} 
+          className={css.link}
+          style={isMobile ? { animationDelay: `${(filteredRoutes.length + 1) * 50}ms` } : {}}
+        >
           <IoMdExit className={css.icon} />
+          {isMobile && <span className={css.linkText}>Выйти</span>}
         </div>
       </div>
     </div>

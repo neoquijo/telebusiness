@@ -12,6 +12,7 @@
 .icon {
   font-size: 1.8em;
   color: var(--icon-primary);
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .links {
@@ -19,7 +20,6 @@
   gap: .5em;
   flex-direction: column;
   margin-top: 1em;
-
 }
 
 .nd {
@@ -33,16 +33,19 @@
   justify-content: center;
   padding: 1em;
   border-radius: 10px;
+  position: relative;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .link:hover {
   padding: 1em;
   background-color: var(--bg-hover);
-  color: var(--bg-hover) !important;
+  transform: translateX(2px);
 }
 
-.link:hover>.icon {
-  /* color: var(--bg-hover) !important */
+.link:hover .icon {
+  color: var(--accent-color);
+  transform: scale(1.1);
 }
 
 .sectionTitle {
@@ -73,4 +76,200 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.linkText {
+  display: none;
+  margin-left: 15px;
+  font-size: 1rem;
+  font-weight: 500;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+/* Стили для активной страницы */
+.activeMark {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 70%;
+  background: var(--accent-color, #4285f4);
+  border-radius: 4px 0 0 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.activeLink {
+  background-color: rgba(var(--accent-color-rgb, 66, 133, 244), 0.1);
+}
+
+.activeLink .activeMark {
+  opacity: 1;
+}
+
+.activeIcon {
+  color: var(--accent-color, #4285f4);
+}
+
+/* Стили для мобильной шапки */
+.mobileHeader {
+  display: none;
+}
+
+.mobileUserInfo {
+  display: flex;
+  align-items: center;
+}
+
+.mobileAvatar, .mobileAvatarPlaceholder {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.mobileAvatarPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--accent-color, #4285f4);
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.mobileUserDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileUserEmail {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobileUserRole {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background-color: var(--bg-hover);
+}
+
+/* Адаптивные стили для мобильного меню */
+@media (max-width: 768px) {
+  .wrapper {
+    width: 100%;
+    box-shadow: none;
+    position: relative;
+    padding: 0;
+    height: 100%;
+  }
+  
+  .mobileHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color, rgba(0,0,0,0.1));
+    margin-bottom: 20px;
+    width: 100%;
+  }
+  
+  .sectionTitle {
+    writing-mode: horizontal-tb;
+    text-orientation: mixed;
+    text-align: center;
+    margin-top: 1em;
+  }
+  
+  .links {
+    width: 100%;
+    padding: 0 16px;
+    gap: 10px;
+  }
+  
+  .link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 14px 20px;
+    border-radius: 12px;
+    animation: menuItemAppear 0.5s ease forwards;
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  
+  @keyframes menuItemAppear {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  
+  .link:hover {
+    padding: 14px 20px;
+    transform: none;
+  }
+  
+  .activeMark {
+    left: 0;
+    right: auto;
+    width: 4px;
+    height: 60%;
+  }
+  
+  .activeLink {
+    background-color: rgba(var(--accent-color-rgb, 66, 133, 244), 0.1);
+  }
+  
+  .linkText {
+    display: block;
+  }
+  
+  .nd {
+    margin-top: auto;
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .icon {
+    font-size: 1.5em;
+  }
+  
+  .link {
+    padding: 12px 16px;
+  }
+  
+  .link:hover {
+    padding: 12px 16px;
+  }
+  
+  .mobileUserEmail {
+    max-width: 150px;
+  }
 }

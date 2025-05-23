@@ -213,8 +213,8 @@ h2 {
 }
 
 h3 {
-  font-size: 2rem !important;
-  margin: 1.7rem !important;
+  /* font-size: 2rem !important; */
+  margin: 1rem !important;
 }
 
 h4 {
@@ -340,3 +340,7 @@ img {
     display: none !important;
   }
 }
+
+/* Импорт фиксов для мобильных компонентов */
+@import './shared/styles/MobileComponents.css';
+@import './shared/styles/MobileFilters.css';
