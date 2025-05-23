@@ -83,10 +83,6 @@ const Sidebar: FC<IProps> = ({ onClose }) => {
 
   return (
     <div onMouseOut={() => !isMobile && setTitle('')} className={css.wrapper}>
-      lol
-      filtered:
-      {filteredRoutes.length}
-      no filtered: {routes.length}
       {isMobile && (
         <div className={css.mobileHeader}>
           <div className={css.mobileUserInfo}>
@@ -125,7 +121,6 @@ const Sidebar: FC<IProps> = ({ onClose }) => {
                 onClick={() => handleNavigation(el.path)}
                 style={isMobile ? { animationDelay: `${delay}ms` } : {}}
               >
-                lol
                 {React.createElement(el.icon!, { 
                   className: `${css.icon} ${isActive ? css.activeIcon : ''}` 
                 })}
