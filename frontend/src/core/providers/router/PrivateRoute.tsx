@@ -4,6 +4,7 @@ import { useAppSelector } from "../../store/MainStore";
 import { useDispatch } from "react-redux";
 import { setAuth, setUser } from "../../store/slices/authSlice";
 import { validateToken } from "../../../utils/tokenValidator";
+import { Role } from "../../../utils/role";
 
 interface PrivateRouteProps {
   allowedRoles: string[]
@@ -68,7 +69,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
         // Если пользователь есть и у него есть роль, проверяем доступ
         if (user && user.role) {
           const roleMatches = allowedRoles.length === 0 || 
-            user.role === 'admin' || 
+            user.role === Role.ADMIN || 
             allowedRoles.includes(user.role);
           
           setHasAccess(roleMatches);

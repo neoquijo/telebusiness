@@ -4,6 +4,7 @@ import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 import LeadDetailPage from "./Pages/LeadDetailPage";
 import LeadsPage from "./Pages/LeadsPage";
 import { FaUserTie } from "react-icons/fa";
+import { Role } from '../../types/User';
 
 const routes: RouteConfig[] = [
   {
@@ -14,7 +15,7 @@ const routes: RouteConfig[] = [
     layout: DashboardLayout,
     navigable: true,
     icon: FaUserTie,
-    allowedRoles: ['admin', 'user'],
+    allowedRoles: [Role.ADMIN, Role.USER],
     subModules: [
       {
         path: "/:id",
@@ -23,7 +24,7 @@ const routes: RouteConfig[] = [
         title: 'Детали лида',
         layout: DashboardLayout,
         navigable: false,
-        allowedRoles: ['admin', 'user'],
+        allowedRoles: [Role.ADMIN, Role.USER],
       }
     ]
   },

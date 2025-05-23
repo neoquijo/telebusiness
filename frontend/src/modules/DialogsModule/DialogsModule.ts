@@ -3,6 +3,7 @@ import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 import { IoMdChatboxes } from "react-icons/io";
 // import ChatPage from "./Pages/ChatPage";
 import DialogsPage from "./Pages/DialogsPage";
+import { Role } from '../../types/User';
 
 
 const routes: RouteConfig[] = [
@@ -14,7 +15,7 @@ const routes: RouteConfig[] = [
     layout: DashboardLayout,
     navigable: true,
     icon: IoMdChatboxes,
-    allowedRoles: ['admin'],
+    allowedRoles: [Role.ADMIN],
     // subModules: [
     //   {
     //     path: "/admin",

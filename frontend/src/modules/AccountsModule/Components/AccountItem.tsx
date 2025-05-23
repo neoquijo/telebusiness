@@ -6,12 +6,10 @@ import { FaUserCircle, FaCircle, FaExclamationCircle, FaInfoCircle, FaRedo, FaPe
 import { Account } from '../../../types/Account';
 import { setCurrentAccount, startEditAccount } from '../../../core/store/slices/accountSlice';
 import { useModalManager } from '../../../core/providers/modal/ModalProvider';
-import { useRefreshSessionMutation } from '../../../API/accountsApi';
 import css from './AccountItem.module.css';
 import EditAccountModal from '../modals/EditAccount/EditAccountModal';
-import CreateAccountModal from '../modals/CreateAccount/CreateAccountModal';
 import ReLoginAccountModal from '../modals/ReLoginAccount/ReLoginAccountModal';
-import { infoError, infoSuccess } from '../../../shared/lib/toastWrapper';
+
 
 interface IProps {
   item: Account;
@@ -21,7 +19,7 @@ const AccountItem: React.FC<IProps> = ({ item }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const modal = useModalManager();
-  const [refreshSession] = useRefreshSessionMutation();
+  
 
   const handleNavigateToChats = () => {
     dispatch(setCurrentAccount(item));

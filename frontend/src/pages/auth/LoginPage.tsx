@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useLoginMutation } from '../../API/authApi';
 import { authService } from '../../services/auth/authService';
 import { useAppDispatch, useAppSelector } from '../../core/store/MainStore';
-import { setAuth, setUser } from '../../core/store/slices/authSlice';
+import { setAuth } from '../../core/store/slices/authSlice';
 import { toast } from 'react-toastify';
 import { FaTelegram, FaUserAlt, FaLock, FaArrowRight, FaSun, FaMoon } from 'react-icons/fa';
 import { useMediaQuery } from '../../hooks/useMediaQuery';

@@ -1,5 +1,4 @@
 import { ComponentType, FC } from 'react';
-import { MobileMenu } from '../../shared/components/MobileMenu/MobileMenu';
 import css from './DefaultLayout.module.css';
 
 interface IProps {

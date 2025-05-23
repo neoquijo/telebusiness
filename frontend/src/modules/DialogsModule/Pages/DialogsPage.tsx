@@ -5,7 +5,7 @@ import SearchInput from '../../../shared/components/UI/SearchInput/SearchInput';
 import { BsFilter } from 'react-icons/bs';
 import { IoIosChatboxes } from 'react-icons/io';
 import { FaUser, FaBroadcastTower, FaTimes } from 'react-icons/fa';
-import { IoSearch, IoFilter, IoRefresh } from 'react-icons/io5';
+import { IoSearch, IoFilter } from 'react-icons/io5';
 import usePagination from '../../../shared/components/Navigation/Pagination/usePagination';
 import css from './DialogsPage.module.css';
 import DialogItem from './DialogItem';

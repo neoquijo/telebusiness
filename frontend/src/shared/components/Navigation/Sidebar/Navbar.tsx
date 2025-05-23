@@ -7,6 +7,7 @@ import { authService } from '../../../../services/auth/authService';
 import { useAppSelector } from '../../../../core/store/MainStore';
 import { useMediaQuery } from '../../../../hooks/useMediaQuery';
 import { FaTimes } from 'react-icons/fa';
+import { Role } from '../../../../types/User';
 
 // Избегаем частой проверки токена - делаем это только при монтировании компонента
 let navbarMounted = false;
@@ -56,7 +57,7 @@ const Sidebar: FC<IProps> = ({ onClose }) => {
     if (!user || !user.role) return false;
     
     // Проверяем роль - админ имеет доступ ко всему
-    return user.role === 'admin' || route.allowedRoles.includes(user.role);
+    return user.role === Role.ADMIN || route.allowedRoles.includes(user.role);
   });
 
   // Функция выхода с подтверждением

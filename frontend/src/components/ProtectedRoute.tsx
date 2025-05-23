@@ -1,6 +1,5 @@
 import React from 'react';
 import { Navigate, useLocation, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 // Предположим, у вас есть такой хук или способ получить данные аутентификации
 // import { useAuth } from '../hooks/useAuth'; // Замените на ваш реальный путь

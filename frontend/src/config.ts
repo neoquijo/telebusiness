@@ -1,1 +1,1 @@
-export const API_URL = 'http://v1.bitspac.es'
+export const API_URL = 'http://localhost:3000'

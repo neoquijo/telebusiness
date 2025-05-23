@@ -3,7 +3,6 @@ import css from './Topbar.module.css';
 import { useAppSelector } from '../../../../core/store/MainStore';
 import { CiBellOn, CiLight } from 'react-icons/ci';
 import { MdDarkMode } from 'react-icons/md';
-import { FiMenu } from 'react-icons/fi';
 import { useTheme } from '../../../../hooks/useTheme';
 import PopInfo from '../../UI/PopInfo/PopInfo';
 

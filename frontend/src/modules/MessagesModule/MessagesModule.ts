@@ -5,6 +5,7 @@ import { FaEnvelope } from "react-icons/fa";
 import MessagesPage from "./pages/MessagesPage";
 import FilteredMessagesPage from "./pages/FilteredMessagePage";
 import MessageStatisticsPage from "./pages/MessageStatisticsPage";
+import { Role } from '../../types/User';
 
 // import FilteredMessagesPage from "./pages/FilteredMessagesPage";
 // import MessageStatisticsPage from "./pages/MessageStatisticsPage";
@@ -18,7 +19,7 @@ const routes: RouteConfig[] = [
     layout: DashboardLayout,
     navigable: true,
     icon: FaEnvelope,
-    allowedRoles: ['admin'],
+    allowedRoles: [Role.ADMIN],
     subModules: [
       {
         path: "/filtered",
@@ -27,7 +28,7 @@ const routes: RouteConfig[] = [
         title: 'Отфильтрованные сообщения',
         layout: DashboardLayout,
         navigable: false,
-        allowedRoles: ['admin'],
+        allowedRoles: [Role.ADMIN],
       },
       {
         path: "/statistics",
@@ -36,7 +37,7 @@ const routes: RouteConfig[] = [
         title: 'Статистика сообщений',
         layout: DashboardLayout,
         navigable: false,
-        allowedRoles: ['admin'],
+        allowedRoles: [Role.ADMIN],
       }
     ]
   },

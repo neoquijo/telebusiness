@@ -4,14 +4,11 @@ import Input from '../../../../shared/components/UI/Input/Input';
 import Button from '../../../../shared/components/UI/Button/Button';
 import { useAppDispatch, useAppSelector } from '../../../../core/store/MainStore';
 import { setAccountInfo, setAccountName, setCode, setHash, setPassword, setPhone, setSessionString, resetAccountForm } from '../../../../core/store/slices/accountSlice';
-import { useCreateAccountMutation, useSendCodeMutation, useUpdateAccountSessionMutation, useVerifyCodeMutation } from '../../../../API/accountsApi';
+import { useSendCodeMutation, useUpdateAccountSessionMutation, useVerifyCodeMutation } from '../../../../API/accountsApi';
 import { infoError, infoSuccess } from '../../../../shared/lib/toastWrapper';
-import { AccountData } from '../../../../types/Account';
-import { MdEdit } from 'react-icons/md';
 import { CgEnter } from 'react-icons/cg';
 import { IoIosSend } from 'react-icons/io';
 import { useModalManager } from '../../../../core/providers/modal/ModalProvider';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 interface ReLoginAccountModalProps {
   account: {

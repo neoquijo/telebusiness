@@ -2,6 +2,7 @@ import { authApi } from "../../API/authApi"
 import { mainStore } from "../../core/store/MainStore";
 import { authSlice } from "../../core/store/slices/authSlice"
 import { toast } from "react-toastify";
+import { Role } from '../../types/User';
 
 // Дебаунс переменные для снижения нагрузки
 let lastAuthCheck = 0;
@@ -113,7 +114,7 @@ export class AuthService {
     }
     
     // Проверяем, является ли пользователь админом или имеет одну из разрешенных ролей
-    const isAdmin = user.role === 'admin';
+    const isAdmin = user.role === Role.ADMIN;
     const hasAllowedRole = allowedRoles.includes(user.role);
     
     console.log(`User: ${user.login}, Role: ${user.role}, isAdmin: ${isAdmin}, hasAllowedRole: ${hasAllowedRole}`);

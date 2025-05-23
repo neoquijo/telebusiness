@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useAppSelector } from '../core/store/MainStore';
+import { Role } from '../types/User';
 
 /**
  * Хук для проверки доступа пользователя на основе ролей
@@ -20,7 +21,7 @@ export const useRoleAccess = () => {
     }
 
     // Проверка на админа (админы имеют доступ ко всему)
-    if (user.role === 'admin') {
+    if (user.role === Role.ADMIN) {
       return true;
     }
 

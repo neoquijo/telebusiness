@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useGetMessagesQuery, useGetMessageStatisticsQuery } from '../../../API/messagesApi';
 import Button from '../../../shared/components/UI/Button/Button';
 import SearchInput from '../../../shared/components/UI/SearchInput/SearchInput';
-import { MdMessage, MdFilterList, MdSettings } from 'react-icons/md';
+import { MdMessage, MdFilterList } from 'react-icons/md';
 import { FaUser, FaBroadcastTower, FaFilter, FaTimes } from 'react-icons/fa';
 import { IoBarChart, IoFilter, IoSearch } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';

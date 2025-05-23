@@ -12,7 +12,8 @@ export interface Account {
   user: User;
   phone: string;
   name: string;
-  status: 'alive' | 'expired' | 'error'
+  status: 'alive' | 'expired' | 'error';
+  photo?: UserProfilePhoto;
 }
 
 interface UserProfilePhoto {
@@ -140,7 +141,6 @@ export interface AccountInfo {
   deleted: boolean;
   bot: boolean;
   botChatHistory: boolean;
-  photo: string;
   botNochats: boolean;
   verified: boolean;
   restricted: boolean;
@@ -167,7 +167,7 @@ export interface AccountInfo {
   lastName: any;
   username: string;
   phone: string;
-  photo: UserProfilePhoto;
+  profilePhoto: UserProfilePhoto;
   status: UserStatus;
   botInfoVersion: any;
   restrictionReason: any;

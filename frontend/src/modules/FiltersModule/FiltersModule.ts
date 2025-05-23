@@ -8,6 +8,7 @@ import FiltersPage from "./pages/FiltersPage";
 import BackToFilters from "./components/widgets/BackToFilters";
 import FilterDetailPage from "./pages/FilterDetailPage";
 import CreateFilterPage from "./pages/CreateFilterPage";
+import { Role } from '../../types/User';
 
 const routes: RouteConfig[] = [
   {
@@ -18,7 +19,7 @@ const routes: RouteConfig[] = [
     layout: DashboardLayout,
     navigable: true,
     icon: FaFilter,
-    allowedRoles: ['admisn'],
+    allowedRoles: [Role.ADMIN],
     subModules: [
       {
         path: "/create",
@@ -28,7 +29,7 @@ const routes: RouteConfig[] = [
         layout: DashboardLayout,
         topWidget: BackToFilters,
         navigable: false,
-        allowedRoles: ['admin'],
+        allowedRoles: [Role.ADMIN],
       },
       {
         path: "/:id",
@@ -38,7 +39,7 @@ const routes: RouteConfig[] = [
         layout: DashboardLayout,
         topWidget: BackToFilters,
         navigable: false,
-        allowedRoles: ['admin'],
+        allowedRoles: [Role.ADMIN],
       }
     ]
   },

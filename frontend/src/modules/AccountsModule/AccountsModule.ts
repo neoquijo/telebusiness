@@ -4,6 +4,7 @@ import BackToAccounts from "./Components/Widgets/BackToChatsWidget";
 import AccountDialogsPage from "./Pages/AccountDialogsPage";
 import AccountsPage from "./Pages/AccountsPage";
 import { FaKey } from "react-icons/fa6";
+import { Role } from '../../types/User';
 
 
 const routes: RouteConfig[] = [
@@ -15,7 +16,7 @@ const routes: RouteConfig[] = [
     layout: DashboardLayout,
     navigable: true,
     icon: FaKey,
-    allowedRoles: ['admin'],
+    allowedRoles: [Role.ADMIN],
     subModules: [
       {
         path: "/accountChats/:id",
@@ -26,7 +27,7 @@ const routes: RouteConfig[] = [
         topWidget: BackToAccounts,
         navigable: false,
         icon: FaKey,
-        allowedRoles: ['admin'],
+        allowedRoles: [Role.ADMIN],
       }
     ]
     // subModules: [

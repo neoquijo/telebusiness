@@ -2,6 +2,7 @@ import { FaPlay } from "react-icons/fa6";
 import { BaseModule, RouteConfig } from "../../core/Module";
 import DashboardLayout from "../../Layouts/Dashboard/DashboardLayout";
 import TasksPage from "./pages/TasksPage";
+import { Role } from '../../types/User';
 
 
 const routes: RouteConfig[] = [
@@ -13,7 +14,7 @@ const routes: RouteConfig[] = [
     layout: DashboardLayout,
     navigable: true,
     icon: FaPlay,
-    allowedRoles: ['admin'],
+    allowedRoles: [Role.ADMIN],
     // subModules: [
     //   {
     //     path: "/admin",
