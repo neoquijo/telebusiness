@@ -121,6 +121,7 @@ const Sidebar: FC<IProps> = ({ onClose }) => {
                 onClick={() => handleNavigation(el.path)}
                 style={isMobile ? { animationDelay: `${delay}ms` } : {}}
               >
+                lol
                 {React.createElement(el.icon!, { 
                   className: `${css.icon} ${isActive ? css.activeIcon : ''}` 
                 })}
@@ -140,6 +141,7 @@ const Sidebar: FC<IProps> = ({ onClose }) => {
         {!isMobile && (
           <div className={css.sectionTitle}>
             {title}
+            
           </div>
         )}
         
