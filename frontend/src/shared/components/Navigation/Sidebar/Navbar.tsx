@@ -83,6 +83,10 @@ const Sidebar: FC<IProps> = ({ onClose }) => {
 
   return (
     <div onMouseOut={() => !isMobile && setTitle('')} className={css.wrapper}>
+      lol
+      filtered:
+      {filteredRoutes.length}
+      no filtered: {routes.length}
       {isMobile && (
         <div className={css.mobileHeader}>
           <div className={css.mobileUserInfo}>
