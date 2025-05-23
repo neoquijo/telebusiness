@@ -9,7 +9,7 @@ import { StringSession } from 'telegram/sessions';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   await app.listen(3000);
-  app.enableCors(); +16606601433
+  app.enableCors(); 
 
   // await TelegramClientFactory.createClient('8U7-VLCQ', {
   //   session: new StringSession("1BAAOMTQ5LjE1NC4xNjcuOTEAUF7Yq9qhlXN+mA+8mB+1yQc9kdTLuwL8murATSI4UgmvzjWdxbC+THdlUcdADddin/yx6+ix9+jH3Q9kvlfEo4+fdkBy3M0J184GvAKVPVVDSwzbxrv72YB9DnYKhLRt0urOwxxCsjcaSvtPraxhCtQOGUk0PqRoQYcvKzyPNJpCLwARzcWYtXuZ1Kt2cnCrtTJYj+Om6cf/YzkkkRrTE6i5HzFXIo08QrMsDIHHUEHRWeqnlDI6LALCdUue8HA/oXcF94s9FHlcu99P62+G0mpVXb/1pcHj9jHYfL49kDR9XYck90oLa930cR0Yu7v54B/T25d+o9j1JGCYzr3Ftt8="),
